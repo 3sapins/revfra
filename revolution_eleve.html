@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>J'ai vécu la Révolution - Joueur</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bleu-roi: #002654;
+            --blanc-royal: #f5f0e6;
+            --rouge-sang: #a41c1c;
+            --or-ancien: #c9a227;
+            --parchemin: #f4edd3;
+            --encre: #1a1a1a;
+            --sepia: #704214;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            min-height: 100vh;
+            background: var(--parchemin);
+            font-family: 'EB Garamond', Georgia, serif;
+            color: var(--encre);
+            line-height: 1.5;
+        }
+        .header {
+            background: linear-gradient(180deg, var(--bleu-roi) 0%, #001a3d 100%);
+            color: var(--blanc-royal);
+            padding: 0.8rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-title { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 700; }
+        .player-name { font-size: 0.85rem; opacity: 0.9; }
+        .container { padding: 1rem; padding-bottom: 200px; max-width: 600px; margin: 0 auto; }
+        
+        /* Écran de connexion */
+        .join-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1.5rem; }
+        .join-card {
+            background: var(--blanc-royal);
+            border: 3px solid var(--sepia);
+            padding: 2rem;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .join-title { font-family: 'Cinzel', serif; font-size: 1.5rem; color: var(--bleu-roi); margin-bottom: 0.5rem; }
+        .join-subtitle { color: var(--rouge-sang); font-style: italic; margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1rem; text-align: left; }
+        .form-group label { font-family: 'Cinzel', serif; font-size: 0.85rem; color: var(--sepia); display: block; margin-bottom: 0.3rem; }
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            font-family: 'EB Garamond', Georgia, serif;
+            font-size: 1.1rem;
+            border: 2px solid var(--sepia);
+            background: var(--parchemin);
+            text-align: center;
+        }
+        .form-group input:focus { outline: none; border-color: var(--or-ancien); }
+        .form-group input.code-input { font-size: 1.5rem; letter-spacing: 5px; text-transform: uppercase; }
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        .btn-primary { background: linear-gradient(180deg, var(--rouge-sang) 0%, #7a1515 100%); color: var(--blanc-royal); }
+        .btn:disabled { background: #999; cursor: not-allowed; }
+        
+        /* Écran d'attente */
+        .waiting-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2rem; }
+        .waiting-icon { font-size: 4rem; margin-bottom: 1rem; }
+        .waiting-text { font-size: 1.3rem; color: var(--sepia); }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .pulse { animation: pulse 1.5s ease infinite; }
+        
+        /* Carte situation */
+        .situation-card {
+            background: var(--blanc-royal);
+            border: 2px solid var(--sepia);
+            margin-bottom: 1rem;
+        }
+        .situation-header {
+            background: linear-gradient(135deg, var(--bleu-roi) 0%, #001a3d 100%);
+            color: var(--blanc-royal);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .situation-year { font-family: 'Cinzel', serif; font-size: 2rem; font-weight: 900; }
+        .situation-acte { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; }
+        .situation-icon { font-size: 2.5rem; }
+        .situation-body { padding: 1rem; }
+        .situation-title { font-family: 'Cinzel', serif; font-size: 1.2rem; color: var(--bleu-roi); margin-bottom: 0.8rem; }
+        .situation-text { font-size: 1rem; line-height: 1.6; margin-bottom: 1rem; }
+        .situation-question { font-family: 'Cinzel', serif; font-size: 1rem; color: var(--sepia); font-weight: 700; margin-bottom: 0.5rem; }
+        
+        /* Choix */
+        .choices { display: flex; flex-direction: column; gap: 0.6rem; }
+        .choice-btn {
+            background: var(--parchemin);
+            border: 2px solid rgba(112,66,20,0.3);
+            padding: 0.9rem 1rem;
+            font-family: 'EB Garamond', Georgia, serif;
+            font-size: 1rem;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            transition: all 0.2s;
+        }
+        .choice-btn:active { background: var(--blanc-royal); border-color: var(--or-ancien); }
+        .choice-btn.selected { background: #d4edda; border-color: #2d5a3d; }
+        .choice-btn.disabled { opacity: 0.6; cursor: not-allowed; }
+        .choice-letter {
+            background: var(--bleu-roi);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+        
+        /* Barre de score fixe en bas */
+        .score-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, #2a2a2a, var(--encre));
+            border-top: 3px solid var(--or-ancien);
+            padding: 0.6rem;
+            z-index: 100;
+        }
+        .my-gauge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            padding: 0.4rem 0.8rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+        }
+        .my-gauge-label { color: var(--blanc-royal); font-family: 'Cinzel', serif; font-size: 0.8rem; flex-shrink: 0; }
+        .my-gauge-bar { flex: 1; height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden; }
+        .my-gauge-fill { height: 100%; background: linear-gradient(90deg, var(--bleu-roi), var(--rouge-sang)); transition: width 0.5s; }
+        .my-gauge-value { color: var(--or-ancien); font-family: 'Cinzel', serif; font-weight: 700; font-size: 0.85rem; min-width: 25px; text-align: right; }
+        
+        .rankings-mini {
+            display: flex;
+            justify-content: space-around;
+            gap: 0.3rem;
+        }
+        .ranking-mini {
+            flex: 1;
+            text-align: center;
+            padding: 0.4rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+        }
+        .ranking-mini-icon { font-size: 1rem; }
+        .ranking-mini-label { font-size: 0.6rem; color: rgba(255,255,255,0.7); text-transform: uppercase; }
+        .ranking-mini-pos { font-family: 'Cinzel', serif; font-size: 1.1rem; font-weight: 900; }
+        .ranking-mini.lumieres .ranking-mini-pos { color: #ffd700; }
+        .ranking-mini.histoire .ranking-mini-pos { color: #4a90d9; }
+        .ranking-mini.ancien .ranking-mini-pos { color: #c0c0c0; }
+        
+        /* Attente réponse */
+        .waiting-answer {
+            text-align: center;
+            padding: 2rem;
+            background: var(--blanc-royal);
+            border: 2px solid var(--sepia);
+        }
+        .waiting-answer-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .waiting-answer-text { font-size: 1.1rem; color: var(--sepia); }
+        
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <!-- Écran de connexion -->
+    <div class="join-screen" id="joinScreen">
+        <div class="join-card">
+            <h1 class="join-title">🏛️ Révolution</h1>
+            <p class="join-subtitle">Rejoins la partie</p>
+            <div class="form-group">
+                <label>Code de la partie</label>
+                <input type="text" id="gameCodeInput" class="code-input" maxlength="4" placeholder="XXXX" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label>Ton prénom</label>
+                <input type="text" id="playerNameInput" placeholder="Entre ton prénom" autocomplete="off">
+            </div>
+            <button class="btn btn-primary" id="joinBtn">Rejoindre</button>
+            <p id="joinError" style="color: var(--rouge-sang); margin-top: 1rem; display: none;"></p>
+        </div>
+    </div>
+    
+    <!-- Écran d'attente -->
+    <div class="waiting-screen hidden" id="waitingScreen">
+        <div>
+            <div class="waiting-icon">⏳</div>
+            <p class="waiting-text pulse">En attente du lancement...</p>
+            <p style="margin-top: 1rem; color: var(--sepia);">Le maître du jeu va bientôt commencer</p>
+        </div>
+    </div>
+    
+    <!-- Écran de jeu -->
+    <div class="game-screen hidden" id="gameScreen">
+        <header class="header">
+            <div class="header-title">🏛️ Révolution</div>
+            <div class="player-name" id="displayName">Joueur</div>
+        </header>
+        
+        <div class="container">
+            <div class="situation-card" id="situationCard">
+                <div class="situation-header">
+                    <div>
+                        <div class="situation-year" id="situationYear">1789</div>
+                        <div class="situation-acte" id="situationActe">Acte I</div>
+                    </div>
+                    <div class="situation-icon" id="situationIcon">📜</div>
+                </div>
+                <div class="situation-body">
+                    <h2 class="situation-title" id="situationTitle">Titre</h2>
+                    <div class="situation-text" id="situationText"></div>
+                    <p class="situation-question" id="situationQuestion"></p>
+                    <div class="choices" id="choicesContainer"></div>
+                </div>
+            </div>
+            
+            <div class="waiting-answer hidden" id="waitingAnswer">
+                <div class="waiting-answer-icon">✅</div>
+                <p class="waiting-answer-text">Réponse enregistrée !<br>Attends la suite...</p>
+            </div>
+        </div>
+        
+        <div class="score-bar">
+            <div class="my-gauge">
+                <span class="my-gauge-label">Ta progression</span>
+                <div class="my-gauge-bar"><div class="my-gauge-fill" id="myGaugeFill" style="width: 0%"></div></div>
+                <span class="my-gauge-value" id="myGaugeValue">0</span>
+            </div>
+            <div class="rankings-mini">
+                <div class="ranking-mini lumieres">
+                    <div class="ranking-mini-icon">🏛️</div>
+                    <div class="ranking-mini-label">Lumières</div>
+                    <div class="ranking-mini-pos" id="myRankLumieres">-</div>
+                </div>
+                <div class="ranking-mini histoire">
+                    <div class="ranking-mini-icon">📜</div>
+                    <div class="ranking-mini-label">Histoire</div>
+                    <div class="ranking-mini-pos" id="myRankHistoire">-</div>
+                </div>
+                <div class="ranking-mini ancien">
+                    <div class="ranking-mini-icon">👑</div>
+                    <div class="ranking-mini-label">Ancien R.</div>
+                    <div class="ranking-mini-pos" id="myRankAncien">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Écran de fin -->
+    <div class="end-screen hidden" id="endScreen" style="padding: 2rem; text-align: center;">
+        <h1 style="font-family: Cinzel, serif; font-size: 1.8rem; color: var(--bleu-roi); margin-bottom: 1rem;">🏛️ Fin de la partie !</h1>
+        <div id="endContent"></div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+<script>
+// ⚠️ IMPORTANT: Mêmes credentials que le fichier maître
+const firebaseConfig = {
+    apiKey: "VOTRE_API_KEY",
+    authDomain: "votre-projet.firebaseapp.com",
+    databaseURL: "https://votre-projet-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "votre-projet"
+};
+
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+let gameCode = '', playerId = '', playerName = '', gameRef = null, currentSituation = 0;
+
+const actes = [
+    { id: 1, periode: "1788-1789" }, { id: 2, periode: "1789-1792" },
+    { id: 3, periode: "1792-1794" }, { id: 4, periode: "1794-1799" },
+    { id: 5, periode: "1799-1815" }, { id: 6, periode: "1814-1821" }
+];
+
+const situations = [
+    { id: 1, acte: 1, year: 1789, title: "Les cahiers de doléances", icon: "📜", question: "Que dis-tu ?",
+      choices: [
+        { text: "Le roi est bon, ses ministres l'ont mal conseillé.", scores: { lumieres: 0, histoire: 1, ancien: 2 } },
+        { text: "Abolissons les privilèges !", scores: { lumieres: 2, histoire: 2, ancien: 0 } },
+        { text: "Il faut une révolution !", scores: { lumieres: 1, histoire: 0, ancien: 0 } },
+        { text: "Je me propose comme délégué.", scores: { lumieres: 1, histoire: 1, ancien: 1 } }
+      ]
+    },
+    { id: 2, acte: 1, year: 1789, title: "Le Serment du Jeu de Paume", icon: "✊", question: "Comment réagis-tu ?",
+      choices: [
+        { text: "Ces députés sont des rebelles !", scores: { lumieres: 0, histoire: 0, ancien: 2 } },
+        { text: "Quel courage !", scores: { lumieres: 2, histoire: 2, ancien: 0 } },
+        { text: "Il faut abolir la monarchie !", scores: { lumieres: 1, histoire: 0, ancien: 0 } },
+        { text: "Attendons de voir...", scores: { lumieres: 0, histoire: 1, ancien: 1 } }
+      ]
+    },
+    { id: 3, acte: 1, year: 1789, title: "La prise de la Bastille", icon: "🏰", question: "Comment réagis-tu ?",
+      choices: [
+        { text: "Ces gens sont des sauvages !", scores: { lumieres: 0, histoire: 0, ancien: 2 } },
+        { text: "La liberté est en marche !", scores: { lumieres: 2, histoire: 2, ancien: 0 } },
+        { text: "Faisons pareil partout !", scores: { lumieres: 0, histoire: 1, ancien: 0 } },
+        { text: "Mettons la cocarde.", scores: { lumieres: 0, histoire: 1, ancien: 1 } }
+      ]
+    },
+    { id: 4, acte: 1, year: 1789, title: "La nuit du 4 août", icon: "🔥", question: "Qu'en penses-tu ?",
+      choices: [
+        { text: "Le seigneur avait des droits !", scores: { lumieres: 0, histoire: 0, ancien: 2 } },
+        { text: "L'Assemblée a bien fait.", scores: { lumieres: 2, histoire: 2, ancien: 0 } },
+        { text: "Partageons les terres !", scores: { lumieres: 1, histoire: 0, ancien: 0 } },
+        { text: "J'achète des terres.", scores: { lumieres: 0, histoire: 1, ancien: 0 } }
+      ]
+    },
+    { id: 5, acte: 1, year: 1789, title: "Déclaration des Droits", icon: "📋", question: "Qu'en penses-tu ?",
+      choices: [
+        { text: "Dieu a voulu des classes !", scores: { lumieres: 0, histoire: 0, ancien: 2 } },
+        { text: "Une société juste !", scores: { lumieres: 2, histoire: 2, ancien: 0 } },
+        { text: "Et les femmes ?", scores: { lumieres: 2, histoire: 0, ancien: 0 } },
+        { text: "Et le prix du pain ?", scores: { lumieres: 0, histoire: 1, ancien: 0 } }
+      ]
+    },
+    { id: 6, acte: 2, year: 1789, title: "Les journées d'octobre", icon: "👩", question: "Ton avis ?",
+      choices: [
+        { text: "Le roi prisonnier !", scores: { lumieres: 0, histoire: 0, ancien: 2 } },
+        { text: "Il doit vivre parmi le peuple.", scores: { lumieres: 2, histoire: 2, ancien: 0 } },
+        { text: "Pendre des aristocrates !", scores: { lumieres: 0, histoire: 0, ancien: 0 } },
+        { text: "Elles avaient faim.", scores: { lumieres: 1, histoire: 1, ancien: 0 } }
+      ]
+    },
+    { id: 7, acte: 2, year: 1790, title: "Constitution civile du clergé", icon: "⛪", question: "Comment réagis-tu ?",
+      choices: [
+        { text: "J'aide le curé à se cacher.", scores: { lumieres: 0, histoire: 0, ancien: 2 } },
+        { text: "La loi est la loi.", scores: { lumieres: 1, histoire: 2, ancien: 0 } },
+        { text: "Bon débarras !", scores: { lumieres: 0, histoire: 0, ancien: 0 } },
+        { text: "Je vais chez le nouveau curé.", scores: { lumieres: 0, histoire: 1, ancien: 1 } }
+      ]
+    },
+    { id: 8, acte: 2, year: 1790, title: "La Fête de la Fédération", icon: "🎉", question: "Tu y participes ?",
+      choices: [
+        { text: "Voir le roi humilié ? Jamais !", scores: { lumieres: 0, histoire: 0, ancien: 2 } },
+        { text: "J'y vais avec enthousiasme !", scores: { lumieres: 2, histoire: 2, ancien: 0 } },
+        { text: "Le roi n'est pas sincère.", scores: { lumieres: 1, histoire: 1, ancien: 0 } },
+        { text: "Ça ne remplit pas les ventres.", scores: { lumieres: 0, histoire: 1, ancien: 0 } }
+      ]
+    },
+    { id: 9, acte: 2, year: 1791, title: "La fuite à Varennes", icon: "🏃", question: "Comment réagis-tu ?",
+      choices: [
+        { text: "Pauvre roi prisonnier !", scores: { lumieres: 0, histoire: 0, ancien: 2 } },
+        { text: "Donnons-lui une chance.", scores: { lumieres: 1, histoire: 2, ancien: 0 } },
+        { text: "Le roi est un traître !", scores: { lumieres: 0, histoire: 1, ancien: 0 } },
+        { text: "Attendons de voir...", scores: { lumieres: 0, histoire: 1, ancien: 1 } }
+      ]
+    },
+    { id: 10, acte: 2, year: 1792, title: "La déclaration de guerre", icon: "⚔️", question: "Ton avis ?",
+      choices: [
+        { text: "L'ennemi rétablira le roi !", scores: { lumieres: 0, histoire: 0, ancien: 2 } },
+        { text: "Défendons la liberté !", scores: { lumieres: 1, histoire: 2, ancien: 0 } },
+        { text: "Cette guerre est folle !", scores: { lumieres: 2, histoire: 0, ancien: 0 } },
+        { text: "Je m'engage volontaire !", scores: { lumieres: 1, histoire: 2, ancien: 0 } }
+      ]
+    },
+    { id: 11, acte: 3, year: 1792, title: "La chute de la royauté", icon: "🏛️", question: "Comment réagis-tu ?",
+      choices: [
+        { text: "Sans roi, c'est perdu !", scores: { lumieres: 0, histoire: 0, ancien: 2 } },
+        { text: "Place à la République !", scores: { lumieres: 2, histoire: 2, ancien: 0 } },
+        { text: "J'ai participé !", scores: { lumieres: 0, histoire: 1, ancien: 0 } },
+        { text: "Attendons de voir.", scores: { lumieres: 0, histoire: 1, ancien: 1 } }
+      ]
+    },
+    { id: 12, acte: 3, year: 1792, title: "Massacres de septembre", icon: "💀", question: "Comment réagis-tu ?",
+      choices: [
+        { text: "La Révolution est folle !", scores: { lumieres: 2, histoire: 0, ancien: 1 } },
+        { text: "La peur les a rendus fous.", scores: { lumieres: 1, histoire: 2, ancien: 0 } },
+        { text: "Le peuple a fait justice !", scores: { lumieres: 0, histoire: 1, ancien: 0 } },
+        { text: "Je reste chez moi.", scores: { lumieres: 0, histoire: 1, ancien: 1 } }
+      ]
+    },
+    { id: 13, acte: 3, year: 1793, title: "L'exécution du roi", icon: "⚰️", question: "Comment réagis-tu ?",
+      choices: [
+        { text: "Crime abominable !", scores: { lumieres: 0, histoire: 0, ancien: 2 } },
+        { text: "Terrible mais nécessaire.", scores: { lumieres: 1, histoire: 2, ancien: 0 } },
+        { text: "Mort au tyran !", scores: { lumieres: 0, histoire: 1, ancien: 0 } },
+        { text: "L'exil aurait suffi.", scores: { lumieres: 2, histoire: 0, ancien: 0 } }
+      ]
+    },
+    { id: 14, acte: 3, year: 1793, title: "La Vendée", icon: "🎖️", question: "Ton jugement ?",
+      choices: [
+        { text: "Ce sont des héros !", scores: { lumieres: 0, histoire: 0, ancien: 2 } },
+        { text: "Je comprends mais...", scores: { lumieres: 1, histoire: 2, ancien: 0 } },
+        { text: "Il faut les écraser !", scores: { lumieres: 0, histoire: 1, ancien: 0 } },
+        { text: "Ouf, pas tiré au sort.", scores: { lumieres: 0, histoire: 1, ancien: 0 } }
+      ]
+    },
+    { id: 15, acte: 3, year: 1793, title: "Assassinat de Marat", icon: "🗡️", question: "Comment réagis-tu ?",
+      choices: [
+        { text: "Elle est une héroïne !", scores: { lumieres: 0, histoire: 0, ancien: 2 } },
+        { text: "L'assassinat est condamnable.", scores: { lumieres: 2, histoire: 1, ancien: 0 } },
+        { text: "Marat était l'ami du peuple !", scores: { lumieres: 0, histoire: 1, ancien: 0 } },
+        { text: "Je garde mes opinions.", scores: { lumieres: 0, histoire: 2, ancien: 1 } }
+      ]
+    },
+    { id: 16, acte: 3, year: 1793, title: "La Terreur", icon: "🔒", question: "Comment survis-tu ?",
+      choices: [
+        { text: "Je prie en secret.", scores: { lumieres: 1, histoire: 0, ancien: 2 } },
+        { text: "C'est nécessaire.", scores: { lumieres: 0, histoire: 2, ancien: 0 } },
+        { text: "Je dénonce un voisin.", scores: { lumieres: 0, histoire: 1, ancien: 0 } },
+        { text: "Je reste discret.", scores: { lumieres: 1, histoire: 2, ancien: 1 } }
+      ]
+    },
+    { id: 17, acte: 3, year: 1794, title: "Chute de Robespierre", icon: "⚡", question: "Comment réagis-tu ?",
+      choices: [
+        { text: "Vive le roi !", scores: { lumieres: 0, histoire: 0, ancien: 2 } },
+        { text: "Tant mieux que c'est fini.", scores: { lumieres: 2, histoire: 2, ancien: 0 } },
+        { text: "Les corrompus l'ont abattu !", scores: { lumieres: 1, histoire: 0, ancien: 0 } },
+        { text: "On va respirer.", scores: { lumieres: 1, histoire: 2, ancien: 0 } }
+      ]
+    },
+    { id: 18, acte: 4, year: 1795, title: "Le Directoire", icon: "🏛️", question: "Ton avis ?",
+      choices: [
+        { text: "Sans roi, c'est le chaos.", scores: { lumieres: 0, histoire: 0, ancien: 2 } },
+        { text: "La Terreur est finie.", scores: { lumieres: 1, histoire: 2, ancien: 0 } },
+        { text: "Bourgeois traîtres !", scores: { lumieres: 2, histoire: 0, ancien: 0 } },
+        { text: "Tant qu'on fait des affaires.", scores: { lumieres: 0, histoire: 1, ancien: 0 } }
+      ]
+    },
+    { id: 19, acte: 4, year: 1796, title: "Bonaparte en Italie", icon: "⚔️", question: "Que penses-tu ?",
+      choices: [
+        { text: "Un militaire dangereux.", scores: { lumieres: 2, histoire: 0, ancien: 0 } },
+        { text: "Enfin un homme fort !", scores: { lumieres: 0, histoire: 2, ancien: 1 } },
+        { text: "Il restaurera le roi ?", scores: { lumieres: 0, histoire: 0, ancien: 2 } },
+        { text: "Quand la paix ?", scores: { lumieres: 1, histoire: 1, ancien: 0 } }
+      ]
+    },
+    { id: 20, acte: 4, year: 1799, title: "Le 18 Brumaire", icon: "🎭", question: "Comment réagis-tu ?",
+      choices: [
+        { text: "Mort de la liberté !", scores: { lumieres: 2, histoire: 0, ancien: 0 } },
+        { text: "Enfin un homme fort !", scores: { lumieres: 0, histoire: 2, ancien: 1 } },
+        { text: "Il restaurera le roi ?", scores: { lumieres: 0, histoire: 0, ancien: 2 } },
+        { text: "Attendons de voir.", scores: { lumieres: 1, histoire: 2, ancien: 0 } }
+      ]
+    },
+    { id: 21, acte: 5, year: 1801, title: "Le Concordat", icon: "⛪", question: "Qu'en penses-tu ?",
+      choices: [
+        { text: "On peut pratiquer !", scores: { lumieres: 0, histoire: 1, ancien: 2 } },
+        { text: "Compromis intelligent.", scores: { lumieres: 1, histoire: 2, ancien: 0 } },
+        { text: "Trahison !", scores: { lumieres: 2, histoire: 0, ancien: 0 } },
+        { text: "Tant qu'on ne m'oblige pas.", scores: { lumieres: 1, histoire: 1, ancien: 0 } }
+      ]
+    },
+    { id: 22, acte: 5, year: 1804, title: "Le sacre", icon: "👑", question: "Comment réagis-tu ?",
+      choices: [
+        { text: "Le vrai roi est Louis XVIII !", scores: { lumieres: 0, histoire: 0, ancien: 2 } },
+        { text: "La République est morte.", scores: { lumieres: 2, histoire: 1, ancien: 0 } },
+        { text: "Vive l'Empereur !", scores: { lumieres: 0, histoire: 2, ancien: 0 } },
+        { text: "Roi ou empereur...", scores: { lumieres: 0, histoire: 1, ancien: 1 } }
+      ]
+    },
+    { id: 23, acte: 5, year: 1805, title: "Austerlitz", icon: "⚔️", question: "Ta réaction ?",
+      choices: [
+        { text: "L'ambition d'un seul.", scores: { lumieres: 2, histoire: 0, ancien: 1 } },
+        { text: "Gloire à l'Empereur !", scores: { lumieres: 0, histoire: 2, ancien: 0 } },
+        { text: "Mon fils est mort.", scores: { lumieres: 1, histoire: 0, ancien: 0 } },
+        { text: "Quand la paix ?", scores: { lumieres: 2, histoire: 1, ancien: 0 } }
+      ]
+    },
+    { id: 24, acte: 5, year: 1806, title: "Le blocus", icon: "🚢", question: "Comment t'adaptes-tu ?",
+      choices: [
+        { text: "L'Empereur sait.", scores: { lumieres: 0, histoire: 2, ancien: 0 } },
+        { text: "Mon commerce est ruiné !", scores: { lumieres: 1, histoire: 0, ancien: 1 } },
+        { text: "Je fais de la contrebande.", scores: { lumieres: 0, histoire: 1, ancien: 0 } },
+        { text: "Je me reconvertis.", scores: { lumieres: 0, histoire: 2, ancien: 0 } }
+      ]
+    },
+    { id: 25, acte: 5, year: 1812, title: "Campagne de Russie", icon: "❄️", question: "Comment réagis-tu ?",
+      choices: [
+        { text: "L'orgueil a tué nos fils.", scores: { lumieres: 2, histoire: 1, ancien: 1 } },
+        { text: "L'Empereur fut trahi.", scores: { lumieres: 0, histoire: 1, ancien: 0 } },
+        { text: "C'est la fin.", scores: { lumieres: 1, histoire: 2, ancien: 1 } },
+        { text: "Mon frère n'est pas revenu.", scores: { lumieres: 2, histoire: 1, ancien: 0 } }
+      ]
+    },
+    { id: 26, acte: 5, year: 1814, title: "L'abdication", icon: "📜", question: "Comment réagis-tu ?",
+      choices: [
+        { text: "Le roi est de retour !", scores: { lumieres: 0, histoire: 1, ancien: 2 } },
+        { text: "Tout ça pour ça.", scores: { lumieres: 2, histoire: 1, ancien: 0 } },
+        { text: "Napoléon reviendra.", scores: { lumieres: 0, histoire: 2, ancien: 0 } },
+        { text: "Je veux la paix.", scores: { lumieres: 1, histoire: 1, ancien: 0 } }
+      ]
+    },
+    { id: 27, acte: 6, year: 1815, title: "Les Cent-Jours", icon: "🦅", question: "Comment réagis-tu ?",
+      choices: [
+        { text: "L'usurpateur revient !", scores: { lumieres: 0, histoire: 0, ancien: 2 } },
+        { text: "Vive l'Empereur !", scores: { lumieres: 0, histoire: 1, ancien: 0 } },
+        { text: "Encore la guerre...", scores: { lumieres: 2, histoire: 1, ancien: 0 } },
+        { text: "Attendons de voir.", scores: { lumieres: 0, histoire: 2, ancien: 1 } }
+      ]
+    },
+    { id: 28, acte: 6, year: 1815, title: "Waterloo", icon: "⚔️", question: "Comment te sens-tu ?",
+      choices: [
+        { text: "Le tyran est vaincu !", scores: { lumieres: 0, histoire: 1, ancien: 2 } },
+        { text: "La gloire est perdue.", scores: { lumieres: 0, histoire: 1, ancien: 0 } },
+        { text: "Enfin la paix !", scores: { lumieres: 2, histoire: 2, ancien: 0 } },
+        { text: "C'était un génie.", scores: { lumieres: 0, histoire: 1, ancien: 0 } }
+      ]
+    },
+    { id: 29, acte: 6, year: 1821, title: "Mort de Napoléon", icon: "⚰️", question: "Quel bilan ?",
+      choices: [
+        { text: "Bon débarras !", scores: { lumieres: 1, histoire: 0, ancien: 2 } },
+        { text: "Un géant de l'Histoire.", scores: { lumieres: 0, histoire: 2, ancien: 0 } },
+        { text: "Il a trahi les idéaux.", scores: { lumieres: 2, histoire: 1, ancien: 0 } },
+        { text: "L'Histoire jugera.", scores: { lumieres: 2, histoire: 2, ancien: 0 } }
+      ]
+    }
+];
+
+// Vérifier si code dans l'URL
+const urlParams = new URLSearchParams(window.location.search);
+const codeFromUrl = urlParams.get('code');
+if (codeFromUrl) document.getElementById('gameCodeInput').value = codeFromUrl.toUpperCase();
+
+// Rejoindre la partie
+document.getElementById('joinBtn').addEventListener('click', async function() {
+    gameCode = document.getElementById('gameCodeInput').value.toUpperCase().trim();
+    playerName = document.getElementById('playerNameInput').value.trim();
+    
+    if (!gameCode || gameCode.length !== 4) {
+        showError('Code invalide (4 caractères)');
+        return;
+    }
+    if (!playerName) {
+        showError('Entre ton prénom');
+        return;
+    }
+    
+    gameRef = database.ref('games/' + gameCode);
+    const snapshot = await gameRef.get();
+    
+    if (!snapshot.exists()) {
+        showError('Partie introuvable');
+        return;
+    }
+    
+    // Créer le joueur
+    playerId = gameRef.child('players').push().key;
+    await gameRef.child('players/' + playerId).set({
+        name: playerName,
+        joinedAt: Date.now(),
+        responses: {}
+    });
+    
+    document.getElementById('joinScreen').classList.add('hidden');
+    document.getElementById('displayName').textContent = playerName;
+    
+    // Écouter le statut de la partie
+    gameRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (!data) return;
+        
+        if (data.status === 'waiting') {
+            document.getElementById('waitingScreen').classList.remove('hidden');
+            document.getElementById('gameScreen').classList.add('hidden');
+        } else if (data.status === 'playing') {
+            document.getElementById('waitingScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            
+            if (currentSituation !== data.currentSituation) {
+                currentSituation = data.currentSituation;
+                renderSituation();
+            }
+            updateMyRankings(data.players);
+        } else if (data.status === 'ended') {
+            showEndScreen(data.players);
+        }
+    });
+});
+
+function showError(msg) {
+    const el = document.getElementById('joinError');
+    el.textContent = msg;
+    el.style.display = 'block';
+}
+
+function renderSituation() {
+    const s = situations[currentSituation];
+    const a = actes.find(x => x.id === s.acte);
+    
+    document.getElementById('situationYear').textContent = s.year;
+    document.getElementById('situationActe').textContent = 'Acte ' + a.id;
+    document.getElementById('situationIcon').textContent = s.icon;
+    document.getElementById('situationTitle').textContent = s.title;
+    document.getElementById('situationQuestion').textContent = s.question;
+    
+    // Vérifier si déjà répondu
+    gameRef.child('players/' + playerId + '/responses/' + currentSituation).get().then((snapshot) => {
+        if (snapshot.exists()) {
+            showWaitingAnswer();
+        } else {
+            showChoices();
+        }
+    });
+}
+
+function showChoices() {
+    document.getElementById('situationCard').classList.remove('hidden');
+    document.getElementById('waitingAnswer').classList.add('hidden');
+    
+    const container = document.getElementById('choicesContainer');
+    container.innerHTML = '';
+    const s = situations[currentSituation];
+    const letters = ['A', 'B', 'C', 'D'];
+    
+    s.choices.forEach((choice, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-btn';
+        btn.innerHTML = '<span class="choice-letter">' + letters[index] + '</span><span>' + choice.text + '</span>';
+        btn.addEventListener('click', () => selectChoice(index));
+        container.appendChild(btn);
+    });
+}
+
+function showWaitingAnswer() {
+    document.getElementById('situationCard').classList.add('hidden');
+    document.getElementById('waitingAnswer').classList.remove('hidden');
+}
+
+async function selectChoice(index) {
+    // Désactiver les boutons
+    document.querySelectorAll('.choice-btn').forEach((btn, i) => {
+        btn.classList.add('disabled');
+        if (i === index) btn.classList.add('selected');
+    });
+    
+    // Enregistrer la réponse
+    await gameRef.child('players/' + playerId + '/responses/' + currentSituation).set(index);
+    
+    setTimeout(showWaitingAnswer, 500);
+}
+
+function updateMyRankings(players) {
+    const scores = [];
+    let myScores = { lumieres: 0, histoire: 0, ancien: 0 };
+    
+    Object.entries(players).forEach(([id, p]) => {
+        let l = 0, h = 0, a = 0;
+        if (p.responses) {
+            Object.entries(p.responses).forEach(([si, ci]) => {
+                const sit = situations[parseInt(si)];
+                if (sit && sit.choices[ci]) {
+                    l += sit.choices[ci].scores.lumieres || 0;
+                    h += sit.choices[ci].scores.histoire || 0;
+                    a += sit.choices[ci].scores.ancien || 0;
+                }
+            });
+        }
+        scores.push({ id, lumieres: l, histoire: h, ancien: a });
+        if (id === playerId) myScores = { lumieres: l, histoire: h, ancien: a };
+    });
+    
+    // Calculer mes rangs
+    const lRank = scores.slice().sort((a, b) => b.lumieres - a.lumieres).findIndex(p => p.id === playerId) + 1;
+    const hRank = scores.slice().sort((a, b) => b.histoire - a.histoire).findIndex(p => p.id === playerId) + 1;
+    const aRank = scores.slice().sort((a, b) => b.ancien - a.ancien).findIndex(p => p.id === playerId) + 1;
+    
+    document.getElementById('myRankLumieres').textContent = '#' + lRank;
+    document.getElementById('myRankHistoire').textContent = '#' + hRank;
+    document.getElementById('myRankAncien').textContent = '#' + aRank;
+    
+    // Jauge personnelle (total des scores)
+    const total = myScores.lumieres + myScores.histoire + myScores.ancien;
+    const maxPossible = currentSituation * 6; // max ~6 points par situation
+    const pct = maxPossible > 0 ? Math.min(100, (total / maxPossible) * 100) : 0;
+    document.getElementById('myGaugeFill').style.width = pct + '%';
+    document.getElementById('myGaugeValue').textContent = total;
+}
+
+function showEndScreen(players) {
+    document.getElementById('gameScreen').classList.add('hidden');
+    document.getElementById('endScreen').classList.remove('hidden');
+    
+    let myScores = { lumieres: 0, histoire: 0, ancien: 0 };
+    const allScores = [];
+    
+    Object.entries(players).forEach(([id, p]) => {
+        let l = 0, h = 0, a = 0;
+        if (p.responses) {
+            Object.entries(p.responses).forEach(([si, ci]) => {
+                const sit = situations[parseInt(si)];
+                if (sit && sit.choices[ci]) {
+                    l += sit.choices[ci].scores.lumieres || 0;
+                    h += sit.choices[ci].scores.histoire || 0;
+                    a += sit.choices[ci].scores.ancien || 0;
+                }
+            });
+        }
+        allScores.push({ id, name: p.name, lumieres: l, histoire: h, ancien: a });
+        if (id === playerId) myScores = { lumieres: l, histoire: h, ancien: a };
+    });
+    
+    const lRank = allScores.slice().sort((a, b) => b.lumieres - a.lumieres).findIndex(p => p.id === playerId) + 1;
+    const hRank = allScores.slice().sort((a, b) => b.histoire - a.histoire).findIndex(p => p.id === playerId) + 1;
+    const aRank = allScores.slice().sort((a, b) => b.ancien - a.ancien).findIndex(p => p.id === playerId) + 1;
+    
+    let dominant = 'équilibré';
+    if (myScores.lumieres > myScores.histoire && myScores.lumieres > myScores.ancien) dominant = '🏛️ Penseur des Lumières';
+    else if (myScores.histoire > myScores.lumieres && myScores.histoire > myScores.ancien) dominant = '📜 Acteur de l\'Histoire';
+    else if (myScores.ancien > myScores.lumieres && myScores.ancien > myScores.histoire) dominant = '👑 Défenseur de l\'Ancien Régime';
+    
+    document.getElementById('endContent').innerHTML = 
+        '<p style="font-size: 1.2rem; margin-bottom: 1.5rem;">Bravo <strong>' + playerName + '</strong> !</p>' +
+        '<div style="background: var(--blanc-royal); border: 2px solid var(--sepia); padding: 1.5rem; margin-bottom: 1rem;">' +
+        '<p style="font-size: 1.3rem; color: var(--bleu-roi); font-family: Cinzel, serif; margin-bottom: 1rem;">Ton profil dominant :</p>' +
+        '<p style="font-size: 1.5rem; font-weight: bold;">' + dominant + '</p></div>' +
+        '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 1rem;">' +
+        '<div style="background: rgba(255,215,0,0.2); padding: 0.8rem; border-radius: 8px;"><div style="font-size: 0.8rem;">🏛️ Lumières</div><div style="font-size: 1.5rem; font-weight: bold;">#' + lRank + '</div><div style="font-size: 0.9rem;">' + myScores.lumieres + ' pts</div></div>' +
+        '<div style="background: rgba(74,144,217,0.2); padding: 0.8rem; border-radius: 8px;"><div style="font-size: 0.8rem;">📜 Histoire</div><div style="font-size: 1.5rem; font-weight: bold;">#' + hRank + '</div><div style="font-size: 0.9rem;">' + myScores.histoire + ' pts</div></div>' +
+        '<div style="background: rgba(192,192,192,0.2); padding: 0.8rem; border-radius: 8px;"><div style="font-size: 0.8rem;">👑 Ancien R.</div><div style="font-size: 1.5rem; font-weight: bold;">#' + aRank + '</div><div style="font-size: 0.9rem;">' + myScores.ancien + ' pts</div></div></div>';
+}
+</script>
+</body>
+</html>

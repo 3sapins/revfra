@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>J'ai vécu la Révolution française</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bleu-roi: #002654;
+            --blanc-royal: #f5f0e6;
+            --rouge-sang: #a41c1c;
+            --or-ancien: #c9a227;
+            --parchemin: #f4edd3;
+            --encre: #1a1a1a;
+            --sepia: #704214;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            min-height: 100vh;
+            background: var(--parchemin);
+            font-family: 'EB Garamond', Georgia, serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border: 12px solid transparent;
+            border-image: repeating-linear-gradient(45deg, var(--bleu-roi) 0px, var(--bleu-roi) 10px, var(--blanc-royal) 10px, var(--blanc-royal) 20px, var(--rouge-sang) 20px, var(--rouge-sang) 30px) 12;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        .container {
+            background: var(--blanc-royal);
+            border: 4px double var(--sepia);
+            padding: 3rem;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 0 0 8px var(--parchemin), 0 0 0 12px var(--sepia), 0 20px 60px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .container::before {
+            content: '🏛️';
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2.5rem;
+        }
+        .title {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--bleu-roi);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+        .subtitle {
+            font-size: 1.3rem;
+            color: var(--rouge-sang);
+            font-style: italic;
+            margin-bottom: 2rem;
+        }
+        .tricolore {
+            display: flex;
+            justify-content: center;
+            margin: 1.5rem 0 2rem;
+        }
+        .tricolore span {
+            width: 30px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        .tricolore .bleu { background: var(--bleu-roi); }
+        .tricolore .blanc { background: var(--blanc-royal); border: 1px solid #ddd; border-left: none; border-right: none; }
+        .tricolore .rouge { background: var(--rouge-sang); }
+        .description {
+            font-size: 1.1rem;
+            color: var(--sepia);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        .buttons-multi {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem 1rem;
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            border: 3px solid;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .btn-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .btn-label {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            font-weight: 400;
+            text-transform: none;
+            margin-top: 0.3rem;
+        }
+        .btn-maitre {
+            background: linear-gradient(180deg, var(--bleu-roi) 0%, #001a3d 100%);
+            color: var(--blanc-royal);
+            border-color: var(--bleu-roi);
+        }
+        .btn-maitre:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 38, 84, 0.4);
+        }
+        .btn-eleve {
+            background: linear-gradient(180deg, var(--rouge-sang) 0%, #7a1515 100%);
+            color: var(--blanc-royal);
+            border-color: var(--rouge-sang);
+        }
+        .btn-eleve:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(164, 28, 28, 0.4);
+        }
+        .btn-solo {
+            background: var(--parchemin);
+            color: var(--sepia);
+            border-color: var(--sepia);
+            padding: 1rem 2rem;
+            flex-direction: row;
+            gap: 0.8rem;
+        }
+        .btn-solo:hover {
+            background: var(--sepia);
+            color: var(--blanc-royal);
+        }
+        .btn-solo .btn-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0;
+        }
+        .separator {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: var(--sepia);
+            font-size: 0.9rem;
+        }
+        .separator::before, .separator::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--sepia);
+            opacity: 0.3;
+        }
+        .separator span {
+            padding: 0 1rem;
+            opacity: 0.7;
+        }
+        .footer {
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: var(--sepia);
+            opacity: 0.7;
+        }
+        @media (max-width: 500px) {
+            body { padding: 1rem; }
+            .container { padding: 2rem 1.5rem; }
+            .title { font-size: 1.5rem; }
+            .buttons-multi { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">J'ai vécu la Révolution</h1>
+        <p class="subtitle">1789 – 1821</p>
+        
+        <div class="tricolore">
+            <span class="bleu"></span>
+            <span class="blanc">⚜️</span>
+            <span class="rouge"></span>
+        </div>
+        
+        <p class="description">
+            Traverse 32 ans d'histoire tumultueuse et découvre quel citoyen tu aurais été !
+        </p>
+        
+        <div class="buttons-multi">
+            <a href="revolution_maitre.html" class="btn btn-maitre">
+                <span class="btn-icon">👨‍🏫</span>
+                Maître du jeu
+                <span class="btn-label">Créer une partie</span>
+            </a>
+            <a href="revolution_eleve.html" class="btn btn-eleve">
+                <span class="btn-icon">🎓</span>
+                Élève
+                <span class="btn-label">Rejoindre une partie</span>
+            </a>
+        </div>
+        
+        <div class="separator"><span>ou</span></div>
+        
+        <a href="revolution_francaise.html" class="btn btn-solo">
+            <span class="btn-icon">🎮</span>
+            <span>Jouer en solo</span>
+        </a>
+        
+        <p class="footer">
+            Collège des Trois-Sapins • Echallens
+        </p>
+    </div>
+</body>
+</html>
