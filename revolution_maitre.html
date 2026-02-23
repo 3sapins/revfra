@@ -114,7 +114,7 @@
                 <button class="btn btn-primary" id="createGameBtn" style="font-size: 1.1rem; padding: 1rem 2.5rem;">Créer une partie</button>
             </div>
             <div id="waitingSection" class="hidden">
-                <div class="qr-container"><canvas id="qrCode"></canvas></div>
+                <div class="qr-container"><div id="qrCode"></div></div>
                 <div class="game-code" style="font-size: 2rem; letter-spacing: 5px; margin: 1rem 0;" id="displayCode">XXXX</div>
                 <div class="join-url" id="joinUrl">URL de connexion</div>
                 <p class="waiting-text pulse">En attente des joueurs...</p>
@@ -160,7 +160,7 @@
     <div class="end-screen hidden" id="endScreen"></div>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 const firebaseConfig = {
     apiKey: "AIzaSyD13KgzVLlclck2HEsBF8cQp-x1tm18CSc",
@@ -217,7 +217,17 @@ document.getElementById('createGameBtn').addEventListener('click', async functio
     document.getElementById('displayCode').textContent = gameCode;
     const joinUrl = window.location.href.replace('maitre', 'eleve').split('?')[0] + '?code=' + gameCode;
     document.getElementById('joinUrl').textContent = joinUrl;
-    QRCode.toCanvas(document.getElementById('qrCode'), joinUrl, { width: 180, margin: 2, color: { dark: '#002654' } });
+    
+    // Générer QR Code
+    const qrContainer = document.getElementById('qrCode');
+    qrContainer.innerHTML = '';
+    new QRCode(qrContainer, {
+        text: joinUrl,
+        width: 180,
+        height: 180,
+        colorDark: '#002654',
+        colorLight: '#ffffff'
+    });
     gameRef.child('players').on('value', (snapshot) => { players = snapshot.val() || {}; updatePlayersList(); });
 });
 
