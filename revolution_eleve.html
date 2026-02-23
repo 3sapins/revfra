@@ -574,11 +574,20 @@ document.getElementById('joinBtn').addEventListener('click', async function() {
     
     // Créer le joueur
     playerId = gameRef.child('players').push().key;
-    await gameRef.child('players/' + playerId).set({
+    const playerData = {
         name: playerName,
         joinedAt: Date.now(),
         responses: {}
-    });
+    };
+    
+    try {
+        await gameRef.child('players/' + playerId).set(playerData);
+        console.log('Joueur créé:', playerId, playerData);
+    } catch(e) {
+        console.error('Erreur création joueur:', e);
+        showError('Erreur de connexion');
+        return;
+    }
     
     document.getElementById('joinScreen').classList.add('hidden');
     document.getElementById('displayName').textContent = playerName;

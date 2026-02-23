@@ -222,8 +222,10 @@ document.getElementById('createGameBtn').addEventListener('click', async functio
 });
 
 function updatePlayersList() {
+    console.log('Players reçus:', players);
     const container = document.getElementById('playersWaiting');
-    const names = Object.values(players).map(p => p.name);
+    const names = Object.values(players).map(p => p.name).filter(n => n);
+    console.log('Noms:', names);
     container.innerHTML = names.map(n => '<span class="player-chip">' + n + '</span>').join('');
     document.getElementById('playerCountSetup').textContent = names.length;
     document.getElementById('startGameBtn').disabled = names.length < 1;
