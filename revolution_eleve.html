@@ -104,8 +104,13 @@
         .situation-icon { font-size: 2.5rem; }
         .situation-body { padding: 1rem; }
         .situation-title { font-family: 'Cinzel', serif; font-size: 1.2rem; color: var(--bleu-roi); margin-bottom: 0.8rem; }
-        .situation-text { font-size: 1rem; line-height: 1.6; margin-bottom: 1rem; }
-        .situation-question { font-family: 'Cinzel', serif; font-size: 1rem; color: var(--sepia); font-weight: 700; margin-bottom: 0.5rem; }
+        .situation-text { font-size: 0.95rem; line-height: 1.6; margin-bottom: 1rem; color: var(--sepia); }
+        .situation-text .term { color: var(--rouge-sang); font-style: italic; }
+        .savoir-plus-box { background: #e8f4e8; border: 1px solid #2d5a3d; padding: 0.8rem; margin-bottom: 1rem; border-radius: 4px; }
+        .savoir-plus-title { font-family: 'Cinzel', serif; font-size: 0.85rem; color: #2d5a3d; margin-bottom: 0.5rem; }
+        .savoir-plus-content { font-size: 0.85rem; line-height: 1.5; }
+        .savoir-plus-content h4 { color: #2d5a3d; font-size: 0.85rem; margin: 0.5rem 0 0.2rem; }
+        .situation-question { font-family: 'Cinzel', serif; font-size: 1rem; color: var(--sepia); font-weight: 700; margin-bottom: 0.8rem; }
         
         /* Choix */
         .choices { display: flex; flex-direction: column; gap: 0.6rem; }
@@ -244,6 +249,10 @@
                 <div class="situation-body">
                     <h2 class="situation-title" id="situationTitle">Titre</h2>
                     <div class="situation-text" id="situationText"></div>
+                    <div class="savoir-plus-box" id="savoirPlusBox">
+                        <div class="savoir-plus-title">📚 En savoir plus</div>
+                        <div class="savoir-plus-content" id="savoirPlusContent"></div>
+                    </div>
                     <p class="situation-question" id="situationQuestion"></p>
                     <div class="choices" id="choicesContainer"></div>
                 </div>
@@ -311,7 +320,10 @@ const actes = [
 ];
 
 const situations = [
-    { id: 1, acte: 1, year: 1789, title: "Les cahiers de doléances", icon: "📜", question: "Que dis-tu ?",
+    { id: 1, acte: 1, year: 1789, title: "Les cahiers de doléances", icon: "📜", 
+      text: "L'hiver 1788 a été terrible. Louis XVI convoque les <em>États généraux</em>. Chaque communauté rédige un <em>cahier de doléances</em>.",
+      savoirPlus: "<h4>Les États généraux</h4><p>Dernière réunion : 1614 ! Le Tiers-État = 98% de la population.</p>",
+      question: "Que dis-tu devant l'assemblée ?",
       choices: [
         { text: "Le roi est bon, ses ministres l'ont mal conseillé.", scores: { lumieres: 0, histoire: 1, ancien: 2 } },
         { text: "Abolissons les privilèges !", scores: { lumieres: 2, histoire: 2, ancien: 0 } },
@@ -319,7 +331,10 @@ const situations = [
         { text: "Je me propose comme délégué.", scores: { lumieres: 1, histoire: 1, ancien: 1 } }
       ]
     },
-    { id: 2, acte: 1, year: 1789, title: "Le Serment du Jeu de Paume", icon: "✊", question: "Comment réagis-tu ?",
+    { id: 2, acte: 1, year: 1789, title: "Le Serment du Jeu de Paume", icon: "✊",
+      text: "Le Tiers-État se proclame <em>Assemblée nationale</em> et jure de donner une <em>Constitution</em> à la France.",
+      savoirPlus: "<h4>Le Jeu de Paume</h4><p>577 députés y ont prêté serment. Un seul a refusé !</p>",
+      question: "Comment réagis-tu ?",
       choices: [
         { text: "Ces députés sont des rebelles !", scores: { lumieres: 0, histoire: 0, ancien: 2 } },
         { text: "Quel courage !", scores: { lumieres: 2, histoire: 2, ancien: 0 } },
@@ -630,6 +645,24 @@ function renderSituation() {
     document.getElementById('situationIcon').textContent = s.icon;
     document.getElementById('situationTitle').textContent = s.title;
     document.getElementById('situationQuestion').textContent = s.question;
+    
+    // Afficher le texte si disponible
+    const textEl = document.getElementById('situationText');
+    if (s.text) {
+        textEl.innerHTML = s.text.replace(/<em>([^<]+)<\/em>/g, '<span class="term">$1</span>').replace(/\n/g, '<br>');
+        textEl.style.display = 'block';
+    } else {
+        textEl.style.display = 'none';
+    }
+    
+    // Afficher le savoir plus si disponible
+    const spBox = document.getElementById('savoirPlusBox');
+    if (s.savoirPlus) {
+        document.getElementById('savoirPlusContent').innerHTML = s.savoirPlus;
+        spBox.style.display = 'block';
+    } else {
+        spBox.style.display = 'none';
+    }
     
     // Vérifier si déjà répondu
     gameRef.child('players/' + playerId + '/responses/' + currentSituation).get().then((snapshot) => {

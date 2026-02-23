@@ -8,156 +8,188 @@
     <style>
         :root { --bleu-roi: #002654; --blanc-royal: #f5f0e6; --rouge-sang: #a41c1c; --or-ancien: #c9a227; --parchemin: #f4edd3; --encre: #1a1a1a; --sepia: #704214; --vert-laurier: #2d5a3d; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { min-height: 100vh; background: linear-gradient(135deg, var(--encre) 0%, #1a1a2e 100%); font-family: 'EB Garamond', Georgia, serif; color: var(--blanc-royal); line-height: 1.6; }
-        .header { background: linear-gradient(180deg, var(--bleu-roi) 0%, #001a3d 100%); border-bottom: 4px solid var(--or-ancien); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-        .header-title { font-family: 'Cinzel', serif; font-size: 1.5rem; font-weight: 700; }
-        .header-info { display: flex; align-items: center; gap: 2rem; }
-        .game-code { background: var(--or-ancien); color: var(--encre); padding: 0.5rem 1rem; font-family: 'Cinzel', serif; font-weight: 900; font-size: 1.3rem; letter-spacing: 3px; }
-        .player-count { font-family: 'Cinzel', serif; }
-        .player-count span { color: var(--or-ancien); font-weight: 700; }
-        .main-container { display: grid; grid-template-columns: 1fr 320px; gap: 1.5rem; padding: 1.5rem; max-width: 1500px; margin: 0 auto; }
-        .situation-panel { background: var(--blanc-royal); color: var(--encre); border: 3px solid var(--sepia); }
-        .situation-header { background: linear-gradient(135deg, var(--bleu-roi) 0%, #001a3d 100%); color: var(--blanc-royal); padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-        .situation-year { font-family: 'Cinzel', serif; font-size: 3rem; font-weight: 900; }
-        .situation-acte { font-family: 'Cinzel', serif; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; }
-        .situation-icon { font-size: 3.5rem; }
-        .situation-body { padding: 2rem; }
-        .situation-title { font-family: 'Cinzel', serif; font-size: 1.8rem; color: var(--bleu-roi); margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--sepia); }
-        .situation-text { font-size: 1.15rem; line-height: 1.9; margin-bottom: 1.5rem; }
-        .situation-text .term { color: var(--rouge-sang); font-style: italic; cursor: help; border-bottom: 1px dotted var(--rouge-sang); position: relative; }
-        .term:hover::after { content: attr(data-def); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--encre); color: var(--blanc-royal); padding: 0.8rem; font-size: 0.85rem; font-style: normal; width: 250px; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .situation-question { font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--sepia); margin: 1.5rem 0; font-weight: 700; }
-        .choices-list { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.5rem; }
-        .choice-item { background: var(--parchemin); border: 2px solid rgba(112,66,20,0.3); padding: 0.8rem 1.2rem; display: flex; align-items: flex-start; gap: 0.8rem; }
-        .choice-letter { background: var(--bleu-roi); color: white; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Cinzel', serif; font-weight: 700; font-size: 0.9rem; flex-shrink: 0; }
-        .savoir-plus-box { background: linear-gradient(135deg, #e8f4e8, #d4edda); border: 2px solid var(--vert-laurier); padding: 1.5rem; margin-top: 1rem; }
-        .savoir-plus-title { font-family: 'Cinzel', serif; font-size: 1rem; color: var(--vert-laurier); margin-bottom: 0.8rem; }
-        .savoir-plus-content { font-size: 0.95rem; line-height: 1.6; }
-        .savoir-plus-content h4 { color: var(--vert-laurier); margin: 0.8rem 0 0.3rem; font-size: 0.95rem; }
-        .savoir-plus-content ul { margin: 0.3rem 0; padding-left: 1.2rem; }
-        .control-bar { background: var(--encre); border-top: 2px solid var(--or-ancien); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-        .responses-status { font-family: 'Cinzel', serif; }
-        .responses-status .count { color: var(--or-ancien); font-size: 1.4rem; font-weight: 900; }
-        .control-buttons { display: flex; gap: 1rem; }
-        .btn { padding: 0.7rem 1.5rem; font-family: 'Cinzel', serif; font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; border: none; cursor: pointer; transition: all 0.3s ease; }
-        .btn-primary { background: linear-gradient(180deg, var(--rouge-sang) 0%, #7a1515 100%); color: var(--blanc-royal); }
-        .btn-primary:hover { transform: translateY(-2px); }
-        .btn-primary:disabled { background: #666; cursor: not-allowed; transform: none; }
-        .btn-secondary { background: linear-gradient(180deg, var(--bleu-roi) 0%, #001a3d 100%); color: var(--blanc-royal); }
-        .btn-gold { background: linear-gradient(180deg, var(--or-ancien) 0%, #a68521 100%); color: var(--encre); }
-        .rankings-panel { display: flex; flex-direction: column; gap: 1rem; }
-        .ranking-card { background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); padding: 0.8rem; flex: 1; }
-        .ranking-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; padding-bottom: 0.4rem; border-bottom: 1px solid rgba(255,255,255,0.2); }
-        .ranking-icon { font-size: 1.3rem; }
-        .ranking-title { font-family: 'Cinzel', serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+        html, body { height: 100%; overflow: hidden; }
+        body { background: var(--parchemin); font-family: 'EB Garamond', Georgia, serif; color: var(--encre); }
+        
+        /* Header compact */
+        .header { background: linear-gradient(180deg, var(--bleu-roi) 0%, #001a3d 100%); color: var(--blanc-royal); padding: 0.5rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .header-left { display: flex; align-items: center; gap: 1.5rem; }
+        .header-title { font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 700; }
+        .header-progress { font-size: 0.9rem; opacity: 0.8; }
+        .header-right { display: flex; align-items: center; gap: 1.5rem; }
+        .game-code { background: var(--or-ancien); color: var(--encre); padding: 0.3rem 0.8rem; font-family: 'Cinzel', serif; font-weight: 900; font-size: 1.1rem; letter-spacing: 2px; }
+        .responses-info { font-family: 'Cinzel', serif; font-size: 1rem; }
+        .responses-info .count { color: var(--or-ancien); font-weight: 700; }
+        
+        /* Écran situation - plein écran */
+        .situation-screen { height: calc(100vh - 50px); display: flex; flex-direction: column; padding: 2rem 4rem; }
+        .situation-header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .situation-year { font-family: 'Cinzel', serif; font-size: 4rem; font-weight: 900; color: var(--bleu-roi); }
+        .situation-acte { font-family: 'Cinzel', serif; font-size: 1rem; color: var(--sepia); text-transform: uppercase; letter-spacing: 2px; }
+        .situation-icon { font-size: 4rem; }
+        
+        .situation-title { font-family: 'Cinzel', serif; font-size: 2.2rem; color: var(--bleu-roi); margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 3px solid var(--or-ancien); }
+        
+        .situation-content { flex: 1; display: flex; gap: 3rem; overflow: hidden; }
+        .situation-text-col { flex: 1.2; overflow-y: auto; padding-right: 1rem; }
+        .situation-text { font-size: 1.4rem; line-height: 2; }
+        .situation-text .term { color: var(--rouge-sang); font-style: italic; }
+        
+        .situation-choices-col { flex: 1; display: flex; flex-direction: column; }
+        .situation-question { font-family: 'Cinzel', serif; font-size: 1.4rem; color: var(--sepia); margin-bottom: 1.5rem; font-weight: 700; }
+        .choices-list { display: flex; flex-direction: column; gap: 1rem; }
+        .choice-item { background: var(--blanc-royal); border: 2px solid var(--sepia); padding: 1rem 1.5rem; display: flex; align-items: flex-start; gap: 1rem; font-size: 1.2rem; }
+        .choice-letter { background: var(--bleu-roi); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Cinzel', serif; font-weight: 700; flex-shrink: 0; }
+        
+        /* Écran classements - plein écran */
+        .rankings-screen { height: calc(100vh - 50px); display: none; padding: 2rem 4rem; }
+        .rankings-screen.active { display: flex; flex-direction: column; }
+        .rankings-title { font-family: 'Cinzel', serif; font-size: 2rem; text-align: center; color: var(--bleu-roi); margin-bottom: 2rem; }
+        .rankings-grid { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+        .ranking-card { background: var(--blanc-royal); border: 4px solid; padding: 1.5rem; display: flex; flex-direction: column; }
         .ranking-card.lumieres { border-color: #ffd700; }
-        .ranking-card.lumieres .ranking-header { color: #ffd700; }
         .ranking-card.histoire { border-color: #4a90d9; }
-        .ranking-card.histoire .ranking-header { color: #4a90d9; }
-        .ranking-card.ancien { border-color: #c0c0c0; }
-        .ranking-card.ancien .ranking-header { color: #c0c0c0; }
-        .ranking-list { list-style: none; }
-        .ranking-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0; font-size: 0.9rem; }
-        .ranking-position { font-family: 'Cinzel', serif; font-weight: 900; width: 20px; text-align: center; }
-        .ranking-position.gold { color: #ffd700; }
-        .ranking-position.silver { color: #c0c0c0; }
-        .ranking-position.bronze { color: #cd7f32; }
+        .ranking-card.ancien { border-color: #a0a0a0; }
+        .ranking-header { display: flex; align-items: center; justify-content: center; gap: 0.8rem; margin-bottom: 1rem; padding-bottom: 0.8rem; border-bottom: 2px solid currentColor; }
+        .ranking-card.lumieres .ranking-header { color: #b8860b; }
+        .ranking-card.histoire .ranking-header { color: #2e6da4; }
+        .ranking-card.ancien .ranking-header { color: #666; }
+        .ranking-icon { font-size: 2rem; }
+        .ranking-title { font-family: 'Cinzel', serif; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px; }
+        .ranking-list { list-style: none; flex: 1; overflow-y: auto; }
+        .ranking-item { display: flex; align-items: center; gap: 1rem; padding: 0.6rem 0; border-bottom: 1px solid rgba(0,0,0,0.1); font-size: 1.2rem; }
+        .ranking-position { font-family: 'Cinzel', serif; font-weight: 900; font-size: 1.4rem; width: 35px; text-align: center; }
+        .ranking-item:nth-child(1) .ranking-position { color: #ffd700; }
+        .ranking-item:nth-child(2) .ranking-position { color: #c0c0c0; }
+        .ranking-item:nth-child(3) .ranking-position { color: #cd7f32; }
         .ranking-name { flex: 1; }
-        .ranking-score { font-family: 'Cinzel', serif; font-weight: 700; color: var(--or-ancien); }
-        .progress-card { background: rgba(255,255,255,0.05); border: 2px solid var(--or-ancien); padding: 0.8rem; }
-        .progress-title { font-family: 'Cinzel', serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.4rem; color: var(--or-ancien); }
-        .progress-bar { height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--bleu-roi), var(--rouge-sang)); transition: width 0.5s ease; }
-        .progress-text { text-align: center; margin-top: 0.4rem; font-size: 0.85rem; }
-        .setup-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+        .ranking-score { font-family: 'Cinzel', serif; font-weight: 700; color: var(--sepia); }
+        
+        .btn-next { position: fixed; bottom: 2rem; right: 2rem; padding: 1rem 2rem; font-family: 'Cinzel', serif; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; background: linear-gradient(180deg, var(--rouge-sang) 0%, #7a1515 100%); color: white; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .btn-next:disabled { background: #999; cursor: not-allowed; }
+        
+        /* Setup screen */
+        .setup-screen { height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--encre) 0%, #1a1a2e 100%); }
         .setup-card { background: var(--blanc-royal); color: var(--encre); border: 4px solid var(--sepia); padding: 3rem; max-width: 550px; width: 100%; text-align: center; }
         .setup-title { font-family: 'Cinzel', serif; font-size: 1.8rem; color: var(--bleu-roi); margin-bottom: 0.5rem; }
         .setup-subtitle { font-size: 1.2rem; color: var(--rouge-sang); margin-bottom: 2rem; font-style: italic; }
         .qr-container { background: white; padding: 1rem; display: inline-block; margin: 1rem 0; border: 2px solid var(--sepia); }
-        .join-url { font-family: monospace; font-size: 0.9rem; background: var(--parchemin); padding: 0.6rem 1rem; border: 1px solid var(--sepia); margin: 1rem 0; word-break: break-all; }
+        .join-url { font-family: monospace; font-size: 0.85rem; background: var(--parchemin); padding: 0.5rem; border: 1px solid var(--sepia); margin: 1rem 0; word-break: break-all; }
         .waiting-text { font-size: 1.1rem; color: var(--sepia); margin: 1rem 0; }
         .players-waiting { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin: 1rem 0; }
-        .player-chip { background: var(--bleu-roi); color: white; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.85rem; }
-        .end-screen { padding: 2rem; max-width: 1100px; margin: 0 auto; }
-        .end-title { font-family: 'Cinzel', serif; font-size: 2.2rem; text-align: center; margin-bottom: 2rem; color: var(--or-ancien); }
-        .final-rankings { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+        .player-chip { background: var(--bleu-roi); color: white; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem; }
+        .btn { padding: 0.8rem 2rem; font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 700; text-transform: uppercase; border: none; cursor: pointer; }
+        .btn-gold { background: linear-gradient(180deg, var(--or-ancien) 0%, #a68521 100%); color: var(--encre); }
+        .btn:disabled { background: #999; cursor: not-allowed; }
+        
+        /* End screen */
+        .end-screen { display: none; height: 100vh; background: linear-gradient(135deg, var(--encre) 0%, #1a1a2e 100%); color: var(--blanc-royal); padding: 2rem; overflow-y: auto; }
+        .end-screen.active { display: block; }
+        .end-title { font-family: 'Cinzel', serif; font-size: 2.5rem; text-align: center; color: var(--or-ancien); margin-bottom: 2rem; }
+        .final-rankings { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 1200px; margin: 0 auto 2rem; }
         .final-ranking-card { background: rgba(255,255,255,0.05); border: 3px solid; padding: 1.5rem; }
         .final-ranking-card.lumieres { border-color: #ffd700; }
         .final-ranking-card.histoire { border-color: #4a90d9; }
         .final-ranking-card.ancien { border-color: #c0c0c0; }
-        .podium { display: flex; justify-content: center; align-items: flex-end; gap: 0.8rem; margin: 1rem 0; }
-        .podium-place { text-align: center; padding: 0.8rem; min-width: 80px; }
-        .podium-place.first { background: linear-gradient(180deg, #ffd700, #b8860b); color: var(--encre); padding-bottom: 2.5rem; }
-        .podium-place.second { background: linear-gradient(180deg, #c0c0c0, #808080); color: var(--encre); padding-bottom: 1.8rem; }
-        .podium-place.third { background: linear-gradient(180deg, #cd7f32, #8b4513); color: white; padding-bottom: 1.2rem; }
-        .podium-name { font-family: 'Cinzel', serif; font-weight: 700; font-size: 0.95rem; }
-        .podium-score { font-size: 0.8rem; opacity: 0.8; }
-        .class-stats { background: rgba(255,255,255,0.05); border: 2px solid var(--or-ancien); padding: 1.5rem; margin-top: 2rem; }
-        .stats-title { font-family: 'Cinzel', serif; font-size: 1.3rem; color: var(--or-ancien); margin-bottom: 1rem; text-align: center; }
+        .podium { display: flex; justify-content: center; align-items: flex-end; gap: 0.5rem; margin: 1rem 0; }
+        .podium-place { text-align: center; padding: 0.8rem; min-width: 100px; }
+        .podium-place.first { background: linear-gradient(180deg, #ffd700, #b8860b); color: var(--encre); padding-bottom: 3rem; }
+        .podium-place.second { background: linear-gradient(180deg, #c0c0c0, #808080); color: var(--encre); padding-bottom: 2rem; }
+        .podium-place.third { background: linear-gradient(180deg, #cd7f32, #8b4513); color: white; padding-bottom: 1.5rem; }
+        .podium-name { font-family: 'Cinzel', serif; font-weight: 700; }
+        .podium-score { font-size: 0.85rem; opacity: 0.8; }
+        .class-stats { background: rgba(255,255,255,0.05); border: 2px solid var(--or-ancien); padding: 1.5rem; max-width: 1200px; margin: 0 auto; }
+        .stats-title { font-family: 'Cinzel', serif; font-size: 1.5rem; color: var(--or-ancien); margin-bottom: 1rem; text-align: center; }
         .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
-        .stat-item { text-align: center; padding: 0.8rem; background: rgba(255,255,255,0.05); }
-        .stat-value { font-family: 'Cinzel', serif; font-size: 1.8rem; font-weight: 900; color: var(--or-ancien); }
-        .stat-label { font-size: 0.85rem; opacity: 0.8; }
+        .stat-item { text-align: center; padding: 1rem; background: rgba(255,255,255,0.05); }
+        .stat-value { font-family: 'Cinzel', serif; font-size: 2rem; font-weight: 900; color: var(--or-ancien); }
+        .stat-label { font-size: 0.9rem; opacity: 0.8; }
+        
         .hidden { display: none !important; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         .pulse { animation: pulse 1.5s ease infinite; }
-        @media (max-width: 900px) { .main-container { grid-template-columns: 1fr; } .final-rankings { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: repeat(2, 1fr); } }
     </style>
 </head>
 <body>
+    <!-- Setup Screen -->
     <div class="setup-screen" id="setupScreen">
         <div class="setup-card">
             <h1 class="setup-title">🏛️ J'ai vécu la Révolution</h1>
             <p class="setup-subtitle">Mode Maître du Jeu</p>
             <div id="createSection">
                 <p style="margin-bottom: 1.5rem;">Créez une partie et partagez le code avec vos élèves.</p>
-                <button class="btn btn-primary" id="createGameBtn" style="font-size: 1.1rem; padding: 1rem 2.5rem;">Créer une partie</button>
+                <button class="btn btn-gold" id="createGameBtn">Créer une partie</button>
             </div>
             <div id="waitingSection" class="hidden">
                 <div class="qr-container"><div id="qrCode"></div></div>
-                <div class="game-code" style="font-size: 2rem; letter-spacing: 5px; margin: 1rem 0;" id="displayCode">XXXX</div>
-                <div class="join-url" id="joinUrl">URL de connexion</div>
+                <div class="game-code" style="font-size: 2.5rem; letter-spacing: 8px; margin: 1rem 0;" id="displayCode">XXXX</div>
+                <div class="join-url" id="joinUrl">URL</div>
                 <p class="waiting-text pulse">En attente des joueurs...</p>
                 <div class="players-waiting" id="playersWaiting"></div>
-                <button class="btn btn-gold" id="startGameBtn" disabled style="margin-top: 1.5rem;">Lancer (<span id="playerCountSetup">0</span> joueurs)</button>
+                <button class="btn btn-gold" id="startGameBtn" disabled style="margin-top: 1rem;">Lancer (<span id="playerCountSetup">0</span> joueurs)</button>
             </div>
         </div>
     </div>
+
+    <!-- Game Screen -->
     <div class="game-screen hidden" id="gameScreen">
         <header class="header">
-            <div class="header-title">🏛️ Révolution Française</div>
-            <div class="header-info">
-                <div class="player-count">Joueurs : <span id="playerCount">0</span></div>
+            <div class="header-left">
+                <div class="header-title">🏛️ J'ai vécu la Révolution</div>
+                <div class="header-progress">Situation <span id="currentNum">1</span> / <span id="totalNum">29</span></div>
+            </div>
+            <div class="header-right">
+                <div class="responses-info">Réponses : <span class="count" id="responsesCount">0</span>/<span id="totalPlayers">0</span></div>
                 <div class="game-code" id="headerCode">XXXX</div>
             </div>
         </header>
-        <div class="main-container">
-            <div class="situation-panel">
-                <div class="situation-header">
-                    <div><div class="situation-year" id="situationYear">1789</div><div class="situation-acte" id="situationActe">Acte I</div></div>
-                    <div class="situation-icon" id="situationIcon">📜</div>
+        
+        <!-- Situation Display -->
+        <div class="situation-screen" id="situationScreen">
+            <div class="situation-header-bar">
+                <div>
+                    <div class="situation-year" id="situationYear">1789</div>
+                    <div class="situation-acte" id="situationActe">Acte I • 1788-1789</div>
                 </div>
-                <div class="situation-body">
-                    <h2 class="situation-title" id="situationTitle">Titre</h2>
+                <div class="situation-icon" id="situationIcon">📜</div>
+            </div>
+            <h2 class="situation-title" id="situationTitle">Titre</h2>
+            <div class="situation-content">
+                <div class="situation-text-col">
                     <div class="situation-text" id="situationText"></div>
+                </div>
+                <div class="situation-choices-col">
                     <p class="situation-question" id="situationQuestion"></p>
                     <div class="choices-list" id="choicesList"></div>
-                    <div class="savoir-plus-box" id="savoirPlusBox"><div class="savoir-plus-title">📚 En savoir plus</div><div class="savoir-plus-content" id="savoirPlusContent"></div></div>
                 </div>
-                <div class="control-bar">
-                    <div class="responses-status">Réponses : <span class="count" id="responsesCount">0</span> / <span id="totalPlayers">0</span></div>
-                    <div class="control-buttons"><button class="btn btn-primary" id="nextSituationBtn" disabled>Suivant →</button></div>
-                </div>
-            </div>
-            <div class="rankings-panel">
-                <div class="progress-card"><div class="progress-title">Progression</div><div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 0%"></div></div><div class="progress-text" id="progressText">1 / 29</div></div>
-                <div class="ranking-card lumieres"><div class="ranking-header"><span class="ranking-icon">🏛️</span><span class="ranking-title">Penseurs des Lumières</span></div><ol class="ranking-list" id="rankingLumieres"></ol></div>
-                <div class="ranking-card histoire"><div class="ranking-header"><span class="ranking-icon">📜</span><span class="ranking-title">Acteurs de l'Histoire</span></div><ol class="ranking-list" id="rankingHistoire"></ol></div>
-                <div class="ranking-card ancien"><div class="ranking-header"><span class="ranking-icon">👑</span><span class="ranking-title">Ancien Régime</span></div><ol class="ranking-list" id="rankingAncien"></ol></div>
             </div>
         </div>
+        
+        <!-- Rankings Display -->
+        <div class="rankings-screen" id="rankingsScreen">
+            <h2 class="rankings-title">📊 Classements après cette situation</h2>
+            <div class="rankings-grid">
+                <div class="ranking-card lumieres">
+                    <div class="ranking-header"><span class="ranking-icon">🏛️</span><span class="ranking-title">Penseurs des Lumières</span></div>
+                    <ol class="ranking-list" id="rankingLumieres"></ol>
+                </div>
+                <div class="ranking-card histoire">
+                    <div class="ranking-header"><span class="ranking-icon">📜</span><span class="ranking-title">Acteurs de l'Histoire</span></div>
+                    <ol class="ranking-list" id="rankingHistoire"></ol>
+                </div>
+                <div class="ranking-card ancien">
+                    <div class="ranking-header"><span class="ranking-icon">👑</span><span class="ranking-title">Défenseurs Ancien Régime</span></div>
+                    <ol class="ranking-list" id="rankingAncien"></ol>
+                </div>
+            </div>
+        </div>
+        
+        <button class="btn-next" id="nextBtn">Suivant →</button>
     </div>
-    <div class="end-screen hidden" id="endScreen"></div>
+    
+    <!-- End Screen -->
+    <div class="end-screen" id="endScreen"></div>
+
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -170,40 +202,42 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
-let gameCode = '', gameRef = null, currentSituation = 0, players = {};
+
+let gameCode = '', gameRef = null, currentSituation = 0, players = {}, showingRankings = false;
 
 const definitions = {"États généraux":"Assemblée des trois ordres pour conseiller le roi","cahier de doléances":"Document listant les plaintes du peuple","Assemblée nationale":"Nom pris par le Tiers-État le 17 juin 1789","Constitution":"Texte définissant les règles du pouvoir","Bastille":"Prison symbole de l'arbitraire royal","Grande Peur":"Panique dans les campagnes, été 1789","biens nationaux":"Propriétés confisquées à l'Église","sans-culottes":"Révolutionnaires parisiens du peuple","Terreur":"Période de répression 1793-1794","guillotine":"Machine à décapiter","Thermidor":"Chute de Robespierre","Directoire":"Régime 1795-1799","18 Brumaire":"Coup d'État de Bonaparte","Consulat":"Régime dirigé par Bonaparte","Concordat":"Accord avec le pape (1801)","blocus continental":"Interdiction de commerce avec l'Angleterre","Waterloo":"Défaite finale de Napoléon","Sainte-Hélène":"Île d'exil de Napoléon"};
 const actes = [{id:1,nom:"La fin de l'Ancien Régime",periode:"1788-1789"},{id:2,nom:"La monarchie constitutionnelle",periode:"1789-1792"},{id:3,nom:"La République et la Terreur",periode:"1792-1794"},{id:4,nom:"La République bourgeoise",periode:"1794-1799"},{id:5,nom:"Le Consulat et l'Empire",periode:"1799-1815"},{id:6,nom:"Épilogue",periode:"1814-1821"}];
+
 const situations = [
-{id:1,acte:1,year:1789,title:"Les cahiers de doléances",icon:"📜",text:"L'hiver 1788 a été terrible. Louis XVI convoque les <em>États généraux</em>. Chaque ordre rédige un <em>cahier de doléances</em>.",question:"C'est ton tour de parler. Que dis-tu ?",savoirPlus:"<h4>Les États généraux</h4><p>Assemblée des trois ordres. Dernière réunion : 1614 !</p>",choices:[{text:"Le roi est bon, ses ministres l'ont mal conseillé.",scores:{lumieres:0,histoire:1,ancien:2}},{text:"Abolissons les privilèges !",scores:{lumieres:2,histoire:2,ancien:0}},{text:"Il faut une révolution !",scores:{lumieres:1,histoire:0,ancien:0}},{text:"Je me propose comme délégué.",scores:{lumieres:1,histoire:1,ancien:1}}]},
-{id:2,acte:1,year:1789,title:"Le Serment du Jeu de Paume",icon:"✊",text:"Le Tiers-État se proclame <em>Assemblée nationale</em> et jure de donner une <em>Constitution</em> à la France.",question:"Comment réagis-tu ?",savoirPlus:"<p>577 députés ont prêté serment dans une salle de Jeu de Paume !</p>",choices:[{text:"Ces députés sont des rebelles !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"Quel courage !",scores:{lumieres:2,histoire:2,ancien:0}},{text:"Il faut abolir la monarchie !",scores:{lumieres:1,histoire:0,ancien:0}},{text:"Attendons de voir...",scores:{lumieres:0,histoire:1,ancien:1}}]},
-{id:3,acte:1,year:1789,title:"La prise de la Bastille",icon:"🏰",text:"14 juillet 1789. La foule prend la <em>Bastille</em>. Le gouverneur est massacré.",question:"Comment réagis-tu ?",savoirPlus:"<p>La Bastille ne contenait que 7 prisonniers !</p>",choices:[{text:"Ces gens sont des sauvages !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"La liberté est en marche !",scores:{lumieres:2,histoire:2,ancien:0}},{text:"Faisons pareil partout !",scores:{lumieres:0,histoire:1,ancien:0}},{text:"Mettons la cocarde.",scores:{lumieres:0,histoire:1,ancien:1}}]},
-{id:4,acte:1,year:1789,title:"La nuit du 4 août",icon:"🔥",text:"La <em>Grande Peur</em> pousse l'Assemblée à abolir les privilèges.",question:"Qu'en penses-tu ?",savoirPlus:"<p>Fin de la société d'ordres en une nuit !</p>",choices:[{text:"Le seigneur avait des droits !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"L'Assemblée a bien fait.",scores:{lumieres:2,histoire:2,ancien:0}},{text:"Partageons les terres !",scores:{lumieres:1,histoire:0,ancien:0}},{text:"J'achète des terres.",scores:{lumieres:0,histoire:1,ancien:0}}]},
-{id:5,acte:1,year:1789,title:"Déclaration des Droits",icon:"📋",text:"L'Assemblée proclame : Les hommes naissent libres et égaux en droits.",question:"Qu'en penses-tu ?",savoirPlus:"<p>Texte fondateur, mais femmes exclues !</p>",choices:[{text:"Dieu a voulu des classes !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"Une société juste !",scores:{lumieres:2,histoire:2,ancien:0}},{text:"Et les femmes ?",scores:{lumieres:2,histoire:0,ancien:0}},{text:"Et le prix du pain ?",scores:{lumieres:0,histoire:1,ancien:0}}]},
-{id:6,acte:2,year:1789,title:"Les journées d'octobre",icon:"👩",text:"Des femmes marchent sur Versailles et ramènent le roi à Paris.",question:"Ton avis ?",savoirPlus:"<p>Le boulanger, la boulangère et le petit mitron !</p>",choices:[{text:"Le roi prisonnier !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"Il doit vivre parmi le peuple.",scores:{lumieres:2,histoire:2,ancien:0}},{text:"Pendre des aristocrates !",scores:{lumieres:0,histoire:0,ancien:0}},{text:"Elles avaient faim.",scores:{lumieres:1,histoire:1,ancien:0}}]},
-{id:7,acte:2,year:1790,title:"Constitution civile du clergé",icon:"⛪",text:"Les prêtres doivent prêter serment. Ton curé a refusé.",question:"Comment réagis-tu ?",savoirPlus:"<p>Division entre jureurs et réfractaires.</p>",choices:[{text:"J'aide le curé à se cacher.",scores:{lumieres:0,histoire:0,ancien:2}},{text:"La loi est la loi.",scores:{lumieres:1,histoire:2,ancien:0}},{text:"Bon débarras !",scores:{lumieres:0,histoire:0,ancien:0}},{text:"Je vais chez le nouveau curé.",scores:{lumieres:0,histoire:1,ancien:1}}]},
-{id:8,acte:2,year:1790,title:"La Fête de la Fédération",icon:"🎉",text:"14 juillet 1790. Grande fête de l'unité nationale.",question:"Tu y participes ?",savoirPlus:"<p>300 000 personnes ! Le roi prête serment.</p>",choices:[{text:"Voir le roi humilié ? Jamais !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"J'y vais avec enthousiasme !",scores:{lumieres:2,histoire:2,ancien:0}},{text:"Le roi n'est pas sincère.",scores:{lumieres:1,histoire:1,ancien:0}},{text:"Ça ne remplit pas les ventres.",scores:{lumieres:0,histoire:1,ancien:0}}]},
-{id:9,acte:2,year:1791,title:"La fuite à Varennes",icon:"🏃",text:"Le roi s'enfuit mais est arrêté.",question:"Comment réagis-tu ?",savoirPlus:"<p>Reconnu grâce aux pièces de monnaie !</p>",choices:[{text:"Pauvre roi prisonnier !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"Donnons-lui une chance.",scores:{lumieres:1,histoire:2,ancien:0}},{text:"Le roi est un traître !",scores:{lumieres:0,histoire:1,ancien:0}},{text:"Attendons de voir...",scores:{lumieres:0,histoire:1,ancien:1}}]},
-{id:10,acte:2,year:1792,title:"La déclaration de guerre",icon:"⚔️",text:"La France déclare la guerre à l'Autriche.",question:"Ton avis ?",savoirPlus:"<p>Début de 23 ans de guerres !</p>",choices:[{text:"L'ennemi rétablira le roi !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"Défendons la liberté !",scores:{lumieres:1,histoire:2,ancien:0}},{text:"Cette guerre est folle !",scores:{lumieres:2,histoire:0,ancien:0}},{text:"Je m'engage volontaire !",scores:{lumieres:1,histoire:2,ancien:0}}]},
-{id:11,acte:3,year:1792,title:"La chute de la royauté",icon:"🏛️",text:"10 août 1792. Les <em>sans-culottes</em> prennent les Tuileries.",question:"Comment réagis-tu ?",savoirPlus:"<p>Fin de la monarchie millénaire !</p>",choices:[{text:"Sans roi, c'est perdu !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"Place à la République !",scores:{lumieres:2,histoire:2,ancien:0}},{text:"J'ai participé !",scores:{lumieres:0,histoire:1,ancien:0}},{text:"Attendons de voir.",scores:{lumieres:0,histoire:1,ancien:1}}]},
-{id:12,acte:3,year:1792,title:"Massacres de septembre",icon:"💀",text:"Massacres dans les prisons de Paris.",question:"Comment réagis-tu ?",savoirPlus:"<p>1 100 à 1 400 morts en 5 jours.</p>",choices:[{text:"La Révolution est folle !",scores:{lumieres:2,histoire:0,ancien:1}},{text:"La peur les a rendus fous.",scores:{lumieres:1,histoire:2,ancien:0}},{text:"Le peuple a fait justice !",scores:{lumieres:0,histoire:1,ancien:0}},{text:"Je reste chez moi.",scores:{lumieres:0,histoire:1,ancien:1}}]},
-{id:13,acte:3,year:1793,title:"L'exécution du roi",icon:"⚰️",text:"21 janvier 1793. Louis XVI est guillotiné.",question:"Comment réagis-tu ?",savoirPlus:"<p>361 voix pour, 360 contre !</p>",choices:[{text:"Crime abominable !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"Terrible mais nécessaire.",scores:{lumieres:1,histoire:2,ancien:0}},{text:"Mort au tyran !",scores:{lumieres:0,histoire:1,ancien:0}},{text:"L'exil aurait suffi.",scores:{lumieres:2,histoire:0,ancien:0}}]},
-{id:14,acte:3,year:1793,title:"La Vendée",icon:"🎖️",text:"La Vendée se révolte contre la levée de 300 000 hommes.",question:"Ton jugement ?",savoirPlus:"<p>150 000 à 300 000 morts.</p>",choices:[{text:"Ce sont des héros !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"Je comprends mais...",scores:{lumieres:1,histoire:2,ancien:0}},{text:"Il faut les écraser !",scores:{lumieres:0,histoire:1,ancien:0}},{text:"Ouf, pas tiré au sort.",scores:{lumieres:0,histoire:1,ancien:0}}]},
-{id:15,acte:3,year:1793,title:"Assassinat de Marat",icon:"🗡️",text:"Charlotte Corday poignarde Marat.",question:"Comment réagis-tu ?",savoirPlus:"<p>J'ai tué un homme pour en sauver cent mille.</p>",choices:[{text:"Elle est une héroïne !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"L'assassinat est condamnable.",scores:{lumieres:2,histoire:1,ancien:0}},{text:"Marat était l'ami du peuple !",scores:{lumieres:0,histoire:1,ancien:0}},{text:"Je garde mes opinions.",scores:{lumieres:0,histoire:2,ancien:1}}]},
-{id:16,acte:3,year:1793,title:"La Terreur",icon:"🔒",text:"La <em>Terreur</em> est à l'ordre du jour. La <em>guillotine</em> fonctionne tous les jours.",question:"Comment survis-tu ?",savoirPlus:"<p>17 000 exécutions officielles.</p>",choices:[{text:"Je prie en secret.",scores:{lumieres:1,histoire:0,ancien:2}},{text:"C'est nécessaire.",scores:{lumieres:0,histoire:2,ancien:0}},{text:"Je dénonce un voisin.",scores:{lumieres:0,histoire:1,ancien:0}},{text:"Je reste discret.",scores:{lumieres:1,histoire:2,ancien:1}}]},
-{id:17,acte:3,year:1794,title:"Chute de Robespierre",icon:"⚡",text:"9 <em>Thermidor</em>. Robespierre est guillotiné.",question:"Comment réagis-tu ?",savoirPlus:"<p>Fin de la Terreur.</p>",choices:[{text:"Vive le roi !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"Tant mieux que c'est fini.",scores:{lumieres:2,histoire:2,ancien:0}},{text:"Les corrompus l'ont abattu !",scores:{lumieres:1,histoire:0,ancien:0}},{text:"On va respirer.",scores:{lumieres:1,histoire:2,ancien:0}}]},
-{id:18,acte:4,year:1795,title:"Le Directoire",icon:"🏛️",text:"Le <em>Directoire</em> remplace la Convention.",question:"Ton avis ?",savoirPlus:"<p>Régime instable et corrompu.</p>",choices:[{text:"Sans roi, c'est le chaos.",scores:{lumieres:0,histoire:0,ancien:2}},{text:"La Terreur est finie.",scores:{lumieres:1,histoire:2,ancien:0}},{text:"Bourgeois traîtres !",scores:{lumieres:2,histoire:0,ancien:0}},{text:"Tant qu'on fait des affaires.",scores:{lumieres:0,histoire:1,ancien:0}}]},
-{id:19,acte:4,year:1796,title:"Bonaparte en Italie",icon:"⚔️",text:"Bonaparte remporte victoire sur victoire.",question:"Que penses-tu ?",savoirPlus:"<p>Il a 27 ans et devient un héros.</p>",choices:[{text:"Un militaire dangereux.",scores:{lumieres:2,histoire:0,ancien:0}},{text:"Enfin un homme fort !",scores:{lumieres:0,histoire:2,ancien:1}},{text:"Il restaurera le roi ?",scores:{lumieres:0,histoire:0,ancien:2}},{text:"Quand la paix ?",scores:{lumieres:1,histoire:1,ancien:0}}]},
-{id:20,acte:4,year:1799,title:"Le 18 Brumaire",icon:"🎭",text:"Bonaparte renverse le Directoire par un coup d'État.",question:"Comment réagis-tu ?",savoirPlus:"<p>La Révolution est fixée... elle est finie.</p>",choices:[{text:"Mort de la liberté !",scores:{lumieres:2,histoire:0,ancien:0}},{text:"Enfin un homme fort !",scores:{lumieres:0,histoire:2,ancien:1}},{text:"Il restaurera le roi ?",scores:{lumieres:0,histoire:0,ancien:2}},{text:"Attendons de voir.",scores:{lumieres:1,histoire:2,ancien:0}}]},
-{id:21,acte:5,year:1801,title:"Le Concordat",icon:"⛪",text:"Bonaparte signe le <em>Concordat</em> avec le pape.",question:"Qu'en penses-tu ?",savoirPlus:"<p>Paix religieuse retrouvée.</p>",choices:[{text:"On peut pratiquer !",scores:{lumieres:0,histoire:1,ancien:2}},{text:"Compromis intelligent.",scores:{lumieres:1,histoire:2,ancien:0}},{text:"Trahison !",scores:{lumieres:2,histoire:0,ancien:0}},{text:"Tant qu'on ne m'oblige pas.",scores:{lumieres:1,histoire:1,ancien:0}}]},
-{id:22,acte:5,year:1804,title:"Le sacre",icon:"👑",text:"Napoléon se couronne empereur.",question:"Comment réagis-tu ?",savoirPlus:"<p>Il pose lui-même la couronne sur sa tête.</p>",choices:[{text:"Le vrai roi est Louis XVIII !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"La République est morte.",scores:{lumieres:2,histoire:1,ancien:0}},{text:"Vive l'Empereur !",scores:{lumieres:0,histoire:2,ancien:0}},{text:"Roi ou empereur...",scores:{lumieres:0,histoire:1,ancien:1}}]},
-{id:23,acte:5,year:1805,title:"Austerlitz",icon:"⚔️",text:"Napoléon écrase les Autrichiens et les Russes.",question:"Ta réaction ?",savoirPlus:"<p>Le soleil d'Austerlitz - chef d'œuvre tactique.</p>",choices:[{text:"L'ambition d'un seul.",scores:{lumieres:2,histoire:0,ancien:1}},{text:"Gloire à l'Empereur !",scores:{lumieres:0,histoire:2,ancien:0}},{text:"Mon fils est mort.",scores:{lumieres:1,histoire:0,ancien:0}},{text:"Quand la paix ?",scores:{lumieres:2,histoire:1,ancien:0}}]},
-{id:24,acte:5,year:1806,title:"Le blocus",icon:"🚢",text:"Napoléon interdit le commerce avec l'Angleterre.",question:"Comment t'adaptes-tu ?",savoirPlus:"<p>L'Europe souffre, l'industrie sucrière se développe.</p>",choices:[{text:"L'Empereur sait.",scores:{lumieres:0,histoire:2,ancien:0}},{text:"Mon commerce est ruiné !",scores:{lumieres:1,histoire:0,ancien:1}},{text:"Je fais de la contrebande.",scores:{lumieres:0,histoire:1,ancien:0}},{text:"Je me reconvertis.",scores:{lumieres:0,histoire:2,ancien:0}}]},
-{id:25,acte:5,year:1812,title:"Campagne de Russie",icon:"❄️",text:"Désastre en Russie. Moins de 100 000 survivants sur 600 000.",question:"Comment réagis-tu ?",savoirPlus:"<p>La Bérézina devient synonyme de catastrophe.</p>",choices:[{text:"L'orgueil a tué nos fils.",scores:{lumieres:2,histoire:1,ancien:1}},{text:"L'Empereur fut trahi.",scores:{lumieres:0,histoire:1,ancien:0}},{text:"C'est la fin.",scores:{lumieres:1,histoire:2,ancien:1}},{text:"Mon frère n'est pas revenu.",scores:{lumieres:2,histoire:1,ancien:0}}]},
-{id:26,acte:5,year:1814,title:"L'abdication",icon:"📜",text:"Napoléon abdique. Louis XVIII revient.",question:"Comment réagis-tu ?",savoirPlus:"<p>Exil à l'île d'Elbe.</p>",choices:[{text:"Le roi est de retour !",scores:{lumieres:0,histoire:1,ancien:2}},{text:"Tout ça pour ça.",scores:{lumieres:2,histoire:1,ancien:0}},{text:"Napoléon reviendra.",scores:{lumieres:0,histoire:2,ancien:0}},{text:"Je veux la paix.",scores:{lumieres:1,histoire:1,ancien:0}}]},
-{id:27,acte:6,year:1815,title:"Les Cent-Jours",icon:"🦅",text:"Napoléon s'évade et reconquiert le pouvoir.",question:"Comment réagis-tu ?",savoirPlus:"<p>Reconquête sans tirer un coup de feu.</p>",choices:[{text:"L'usurpateur revient !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"Vive l'Empereur !",scores:{lumieres:0,histoire:1,ancien:0}},{text:"Encore la guerre...",scores:{lumieres:2,histoire:1,ancien:0}},{text:"Attendons de voir.",scores:{lumieres:0,histoire:2,ancien:1}}]},
-{id:28,acte:6,year:1815,title:"Waterloo",icon:"⚔️",text:"<em>Waterloo</em>. Défaite finale.",question:"Comment te sens-tu ?",savoirPlus:"<p>50 000 morts en une journée.</p>",choices:[{text:"Le tyran est vaincu !",scores:{lumieres:0,histoire:1,ancien:2}},{text:"La gloire est perdue.",scores:{lumieres:0,histoire:1,ancien:0}},{text:"Enfin la paix !",scores:{lumieres:2,histoire:2,ancien:0}},{text:"C'était un génie.",scores:{lumieres:0,histoire:1,ancien:0}}]},
-{id:29,acte:6,year:1821,title:"Mort de Napoléon",icon:"⚰️",text:"Napoléon meurt à <em>Sainte-Hélène</em>.",question:"Quel bilan ?",savoirPlus:"<p>Son corps sera ramené aux Invalides en 1840.</p>",choices:[{text:"Bon débarras !",scores:{lumieres:1,histoire:0,ancien:2}},{text:"Un géant de l'Histoire.",scores:{lumieres:0,histoire:2,ancien:0}},{text:"Il a trahi les idéaux.",scores:{lumieres:2,histoire:1,ancien:0}},{text:"L'Histoire jugera.",scores:{lumieres:2,histoire:2,ancien:0}}]}
+{id:1,acte:1,year:1789,title:"Les cahiers de doléances",icon:"📜",text:"L'hiver 1788 a été terrible : le gel a détruit les récoltes, le prix du pain a doublé. La France est au bord de la faillite.\n\nFace à la crise, Louis XVI convoque les <em>États généraux</em> — une assemblée des trois ordres (Clergé, Noblesse, Tiers-État) qui ne s'est pas réunie depuis 175 ans !\n\nChaque communauté doit rédiger un <em>cahier de doléances</em> pour exprimer ses plaintes et ses souhaits de réformes. Dans ton village, l'assemblée se réunit à l'église. C'est ton tour de parler.",question:"Que dis-tu devant l'assemblée ?",savoirPlus:"<h4>Les États généraux</h4><p>Dernière réunion : 1614 ! Le Tiers-État représente 98% de la population mais n'a qu'une voix sur trois.</p>",choices:[{text:"Le roi est bon, mais ses ministres l'ont mal conseillé. Faisons-lui confiance.",scores:{lumieres:0,histoire:1,ancien:2}},{text:"Abolissons les privilèges ! Nous voulons l'égalité devant l'impôt !",scores:{lumieres:2,histoire:2,ancien:0}},{text:"Les cahiers ne servent à rien ! Il faut prendre les armes !",scores:{lumieres:1,histoire:0,ancien:0}},{text:"Je me propose comme délégué pour porter nos doléances à Versailles.",scores:{lumieres:1,histoire:1,ancien:1}}]},
+{id:2,acte:1,year:1789,title:"Le Serment du Jeu de Paume",icon:"✊",text:"Les États généraux s'ouvrent à Versailles le 5 mai 1789. Très vite, un conflit éclate : comment voter ? Par ordre (ce qui avantage Clergé et Noblesse) ou par tête ?\n\nLe 17 juin, le Tiers-État se proclame <em>Assemblée nationale</em>. Le 20 juin, trouvant leur salle fermée, les députés se réunissent dans une salle de Jeu de Paume et jurent de ne jamais se séparer avant d'avoir donné une <em>Constitution</em> à la France.",question:"Comment réagis-tu à cette nouvelle extraordinaire ?",savoirPlus:"<h4>Le Jeu de Paume</h4><p>C'était l'ancêtre du tennis ! 577 députés y ont prêté serment. Un seul a refusé.</p>",choices:[{text:"Ces députés sont des rebelles qui insultent le roi !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"Quel courage ! Enfin des hommes qui osent défier l'arbitraire !",scores:{lumieres:2,histoire:2,ancien:0}},{text:"Ce n'est qu'un début ! Il faut abolir complètement la monarchie !",scores:{lumieres:1,histoire:0,ancien:0}},{text:"Attendons de voir comment le roi va réagir...",scores:{lumieres:0,histoire:1,ancien:1}}]},
+{id:3,acte:1,year:1789,title:"La prise de la Bastille",icon:"🏰",text:"Paris, 14 juillet 1789. Le roi a massé 20 000 soldats autour de la capitale et renvoyé le ministre Necker, populaire auprès du peuple.\n\nLa foule parisienne s'arme et marche sur la <em>Bastille</em>, forteresse médiévale servant de prison royale. Après 4 heures de combat, la forteresse tombe. Le gouverneur de Launay est massacré, sa tête promenée au bout d'une pique.\n\nOn distribue des cocardes tricolores : bleu et rouge (Paris), blanc (le roi).",question:"Comment réagis-tu à ces événements ?",savoirPlus:"<h4>La Bastille</h4><p>Elle ne contenait que 7 prisonniers ce jour-là ! Mais elle symbolisait l'arbitraire royal : le roi pouvait y enfermer n'importe qui sans procès.</p>",choices:[{text:"Une tête au bout d'une pique ! Ces gens sont des sauvages !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"La Bastille est tombée ! La liberté est en marche !",scores:{lumieres:2,histoire:2,ancien:0}},{text:"Faisons pareil avec tous les châteaux de France !",scores:{lumieres:0,histoire:1,ancien:0}},{text:"Mettons cette cocarde tricolore pour éviter les ennuis...",scores:{lumieres:0,histoire:1,ancien:1}}]},
+{id:4,acte:1,year:1789,title:"La nuit du 4 août",icon:"🔥",text:"La <em>Grande Peur</em> secoue les campagnes. Des rumeurs de \"brigands\" poussent les paysans à s'armer. Ils en profitent pour attaquer les châteaux et brûler les archives seigneuriales.\n\nÀ l'Assemblée, dans la nuit du 4 août, nobles et clercs renoncent à leurs privilèges dans un élan d'enthousiasme (sincère ou calculé ?). C'est la fin de la société d'ordres vieille de mille ans !",question:"Que penses-tu de ces événements ?",savoirPlus:"<h4>Ce qui a été aboli</h4><ul><li>Droits seigneuriaux</li><li>Dîme de l'Église</li><li>Privilèges fiscaux</li><li>Justice seigneuriale</li></ul>",choices:[{text:"Ces paysans sont des voleurs ! Le seigneur avait des droits légitimes !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"L'Assemblée a eu raison d'abolir ces privilèges injustes.",scores:{lumieres:2,histoire:2,ancien:0}},{text:"Maintenant, il faut aussi partager les terres des nobles !",scores:{lumieres:1,histoire:0,ancien:0}},{text:"Je me renseigne pour acheter des terres à bas prix...",scores:{lumieres:0,histoire:1,ancien:0}}]},
+{id:5,acte:1,year:1789,title:"La Déclaration des Droits de l'Homme",icon:"📋",text:"Le 26 août 1789, l'Assemblée adopte la Déclaration des Droits de l'Homme et du Citoyen :\n\n\"Les hommes naissent et demeurent libres et égaux en droits.\"\n\nCe texte proclame la liberté d'expression, la présomption d'innocence, le droit de propriété. Il inspirera le monde entier.",question:"Qu'en penses-tu ?",savoirPlus:"<h4>Les limites</h4><p>Les femmes sont exclues. L'esclavage est maintenu dans les colonies. Seuls les hommes riches pourront voter.</p>",choices:[{text:"Texte impie ! Dieu a voulu qu'il y ait des nobles et des paysans !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"Magnifique ! Liberté, égalité... les fondements d'une société juste !",scores:{lumieres:2,histoire:2,ancien:0}},{text:"Ça ne va pas assez loin ! Et les femmes ? Et les esclaves ?",scores:{lumieres:2,histoire:0,ancien:0}},{text:"C'est joli, mais est-ce que ça fera baisser le prix du pain ?",scores:{lumieres:0,histoire:1,ancien:0}}]},
+{id:6,acte:2,year:1789,title:"Les journées d'octobre",icon:"👩",text:"Octobre 1789. Le pain manque toujours à Paris. Le 5 octobre, des milliers de femmes, armées de piques et de bâtons, marchent sur Versailles aux cris de \"Du pain !\"\n\nLe lendemain, après une nuit agitée où la reine manque d'être tuée, la famille royale est ramenée à Paris. Le roi ne reviendra jamais à Versailles.",question:"Que penses-tu de ces événements ?",savoirPlus:"<h4>Le cortège</h4><p>Les femmes ont \"ramené le boulanger, la boulangère et le petit mitron\" (le roi, la reine, le dauphin) !</p>",choices:[{text:"Le roi prisonnier de la populace ! Quelle humiliation !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"Le roi doit vivre parmi son peuple, pas dans un palais doré.",scores:{lumieres:2,histoire:2,ancien:0}},{text:"Il aurait fallu pendre quelques aristocrates au passage !",scores:{lumieres:0,histoire:0,ancien:0}},{text:"Ces femmes avaient faim. Qui peut leur en vouloir ?",scores:{lumieres:1,histoire:1,ancien:0}}]},
+{id:7,acte:2,year:1790,title:"La Constitution civile du clergé",icon:"⛪",text:"L'Assemblée réorganise l'Église de France. Les <em>biens nationaux</em> (propriétés de l'Église) sont confisqués et vendus. Les prêtres doivent prêter serment de fidélité à la Nation.\n\nLe clergé se divise : les \"jureurs\" acceptent, les \"réfractaires\" refusent. Le vieux curé de ton village a refusé de jurer. Il est chassé.",question:"Comment réagis-tu ?",savoirPlus:"<h4>La division</h4><p>Environ la moitié des prêtres refusent le serment. Cette division alimentera les guerres civiles.</p>",choices:[{text:"Ce pauvre curé ! Je l'aide à se cacher.",scores:{lumieres:0,histoire:0,ancien:2}},{text:"La loi est la loi. L'Église doit servir la Nation.",scores:{lumieres:1,histoire:2,ancien:0}},{text:"Bon débarras ! Les curés sont des parasites !",scores:{lumieres:0,histoire:0,ancien:0}},{text:"Je vais à la messe du nouveau curé. Mieux vaut ne pas se faire remarquer.",scores:{lumieres:0,histoire:1,ancien:1}}]},
+{id:8,acte:2,year:1790,title:"La Fête de la Fédération",icon:"🎉",text:"14 juillet 1790, premier anniversaire de la prise de la Bastille. 300 000 personnes se rassemblent au Champ-de-Mars pour célébrer l'unité de la France.\n\nLe roi Louis XVI prête serment à la Constitution devant la foule enthousiaste. C'est l'apogée de l'unité révolutionnaire. On croit à la réconciliation !",question:"On te propose de participer à cette fête historique.",savoirPlus:"<h4>L'illusion</h4><p>Ce moment d'union est trompeur. Dans quelques mois, le roi tentera de fuir...</p>",choices:[{text:"Voir le roi humilié, obligé de prêter serment ? Jamais !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"J'y vais avec enthousiasme ! C'est un jour historique !",scores:{lumieres:2,histoire:2,ancien:0}},{text:"J'y vais, mais je reste sceptique. Le roi n'est pas sincère.",scores:{lumieres:1,histoire:1,ancien:0}},{text:"La fête, c'est joli, mais ça ne remplit pas les ventres.",scores:{lumieres:0,histoire:1,ancien:0}}]},
+{id:9,acte:2,year:1791,title:"La fuite à Varennes",icon:"🏃",text:"Nuit du 20 juin 1791. Louis XVI, déguisé en valet, s'enfuit de Paris avec sa famille. Il espère rejoindre les armées autrichiennes pour reconquérir son pouvoir absolu.\n\nMais à Varennes, il est reconnu grâce à son profil sur les pièces de monnaie ! La famille royale est ramenée à Paris dans un silence glacial.",question:"Pour beaucoup, c'est une trahison. Comment réagis-tu ?",savoirPlus:"<h4>Les conséquences</h4><p>Le mythe du \"roi père de son peuple\" s'effondre. Les républicains réclament sa déchéance.</p>",choices:[{text:"Pauvre roi ! Prisonnier dans son propre pays !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"C'est une erreur, mais donnons-lui une seconde chance.",scores:{lumieres:1,histoire:2,ancien:0}},{text:"Le roi est un traître ! À mort le tyran !",scores:{lumieres:0,histoire:1,ancien:0}},{text:"Attendons de voir... Peut-être a-t-il été enlevé ?",scores:{lumieres:0,histoire:1,ancien:1}}]},
+{id:10,acte:2,year:1792,title:"La déclaration de guerre",icon:"⚔️",text:"20 avril 1792. La France déclare la guerre à l'Autriche. Les révolutionnaires veulent \"libérer les peuples opprimés\". Le roi espère secrètement une défaite qui restaurerait son pouvoir.\n\nC'est le début de 23 années de guerres quasi-ininterrompues qui feront des millions de morts.",question:"Qu'en penses-tu ?",savoirPlus:"<h4>Robespierre contre la guerre</h4><p>\"Personne n'aime les missionnaires armés.\" Il avait raison : la guerre mènera à la dictature.</p>",choices:[{text:"Les armées étrangères vont rétablir le roi dans ses droits !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"Cette guerre est juste : nous défendons la liberté des peuples !",scores:{lumieres:1,histoire:2,ancien:0}},{text:"Cette guerre est une folie qui va saigner le peuple !",scores:{lumieres:2,histoire:0,ancien:0}},{text:"Je m'engage comme volontaire pour défendre la patrie !",scores:{lumieres:1,histoire:2,ancien:0}}]},
+{id:11,acte:3,year:1792,title:"La chute de la royauté",icon:"🏛️",text:"10 août 1792. Les armées ennemies avancent. Le manifeste de Brunswick menace Paris de destruction si on touche au roi.\n\nRéponse du peuple : les <em>sans-culottes</em> parisiens attaquent le palais des Tuileries. Les gardes suisses sont massacrés (600 morts). Louis XVI se réfugie à l'Assemblée.\n\nLa monarchie, vieille de mille ans, s'effondre en quelques heures.",question:"Comment réagis-tu ?",savoirPlus:"<h4>Les sans-culottes</h4><p>Artisans et ouvriers parisiens. Ils portent le pantalon (pas la culotte des aristocrates) et le bonnet phrygien rouge.</p>",choices:[{text:"C'est la fin de tout ! Sans roi, la France est perdue !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"C'était inévitable après Varennes. Place à la République !",scores:{lumieres:2,histoire:2,ancien:0}},{text:"Victoire ! J'ai participé à l'assaut !",scores:{lumieres:0,histoire:1,ancien:0}},{text:"Attendons de voir qui prend le pouvoir...",scores:{lumieres:0,histoire:1,ancien:1}}]},
+{id:12,acte:3,year:1792,title:"Les massacres de septembre",icon:"💀",text:"Septembre 1792. Les Prussiens approchent de Paris. La panique s'empare de la ville. Pendant 5 jours, des bandes de sans-culottes envahissent les prisons et massacrent les détenus : prêtres réfractaires, aristocrates, mais aussi voleurs et prostituées.\n\n1 100 à 1 400 morts. Les autorités laissent faire.",question:"Comment réagis-tu ?",savoirPlus:"<h4>Le traumatisme</h4><p>Ces massacres divisent profondément les révolutionnaires. Les Girondins accusent les Montagnards.</p>",choices:[{text:"Quelle horreur ! La Révolution est devenue folle !",scores:{lumieres:2,histoire:0,ancien:1}},{text:"C'est terrible, mais la peur a rendu le peuple fou.",scores:{lumieres:1,histoire:2,ancien:0}},{text:"Ces aristocrates complotaient ! Le peuple a fait justice !",scores:{lumieres:0,histoire:1,ancien:0}},{text:"Je reste enfermé chez moi. Ne pas se faire remarquer.",scores:{lumieres:0,histoire:1,ancien:1}}]},
+{id:13,acte:3,year:1793,title:"L'exécution du roi",icon:"⚰️",text:"21 janvier 1793. Place de la Révolution (actuelle Concorde). Louis XVI monte sur l'échafaud. Il tente de parler à la foule mais les tambours couvrent sa voix.\n\n\"Je meurs innocent. Je pardonne à mes ennemis.\"\n\nLa lame tombe. Un homme trempe son mouchoir dans le sang royal.",question:"Comment réagis-tu à cette nouvelle ?",savoirPlus:"<h4>Le vote</h4><p>361 députés ont voté la mort, 360 contre. Une seule voix de différence ! Philippe Égalité, cousin du roi, a voté la mort.</p>",choices:[{text:"C'est un crime abominable ! Ils ont tué l'oint de Dieu !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"Décision terrible mais nécessaire. On ne pouvait pas le garder.",scores:{lumieres:1,histoire:2,ancien:0}},{text:"Mort au tyran ! Que tous les nobles suivent !",scores:{lumieres:0,histoire:1,ancien:0}},{text:"L'exil aurait suffi. Cela va nous attirer des ennemis.",scores:{lumieres:2,histoire:0,ancien:0}}]},
+{id:14,acte:3,year:1793,title:"La Vendée se soulève",icon:"🎖️",text:"Mars 1793. La Convention ordonne la levée de 300 000 hommes pour la guerre. En Vendée, les paysans refusent. Ils prennent les armes pour défendre leurs prêtres réfractaires et leur mode de vie.\n\nUne guerre civile atroce commence entre \"Blancs\" (royalistes) et \"Bleus\" (républicains). Entre 150 000 et 300 000 morts.",question:"Comment juges-tu cette révolte ?",savoirPlus:"<h4>Pourquoi la Vendée ?</h4><p>Région très catholique, attachée à ses prêtres. Les paysans ne veulent pas mourir pour une révolution qu'ils n'ont pas choisie.</p>",choices:[{text:"Ces Vendéens sont des héros qui défendent la vraie foi !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"Je comprends leur attachement religieux, mais la patrie est en danger.",scores:{lumieres:1,histoire:2,ancien:0}},{text:"Ce sont des traîtres vendus aux Anglais ! Il faut les écraser !",scores:{lumieres:0,histoire:1,ancien:0}},{text:"Ouf, je n'ai pas été tiré au sort pour la guerre...",scores:{lumieres:0,histoire:1,ancien:0}}]},
+{id:15,acte:3,year:1793,title:"L'assassinat de Marat",icon:"🗡️",text:"13 juillet 1793. Charlotte Corday, une jeune Normande de 24 ans, poignarde Jean-Paul Marat dans sa baignoire. \"L'Ami du peuple\", journaliste radical, réclamait toujours plus de têtes.\n\n\"J'ai tué un homme pour en sauver cent mille\", dit-elle à son procès.\n\nElle est guillotinée 4 jours plus tard. Marat devient un martyr, la Terreur s'intensifie.",question:"Comment réagis-tu ?",savoirPlus:"<h4>Le tableau de David</h4><p>Le peintre Jacques-Louis David immortalise la scène. Marat devient un saint révolutionnaire.</p>",choices:[{text:"Cette femme est une héroïne courageuse !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"L'assassinat politique est condamnable, mais Marat appelait au meurtre...",scores:{lumieres:2,histoire:1,ancien:0}},{text:"Marat était l'ami du peuple ! Vengeance !",scores:{lumieres:0,histoire:1,ancien:0}},{text:"Je garde mes opinions pour moi. C'est plus prudent.",scores:{lumieres:0,histoire:2,ancien:1}}]},
+{id:16,acte:3,year:1793,title:"La Terreur",icon:"🔒",text:"La <em>Terreur</em> est \"à l'ordre du jour\". Le Comité de salut public gouverne par décrets. La loi des suspects permet d'arrêter n'importe qui. Le Tribunal révolutionnaire juge sans appel.\n\nLa <em>guillotine</em> fonctionne tous les jours. 17 000 exécutions officielles (bien plus en réalité). On peut mourir pour une parole, un geste, une ancienne amitié.",question:"Comment survis-tu à cette période ?",savoirPlus:"<h4>Qui meurt ?</h4><p>Nobles, prêtres, mais surtout des gens ordinaires : 85% des guillotinés sont des roturiers.</p>",choices:[{text:"Je prie en secret pour que ce cauchemar finisse.",scores:{lumieres:1,histoire:0,ancien:2}},{text:"C'est horrible, mais nécessaire pour sauver la République.",scores:{lumieres:0,histoire:2,ancien:0}},{text:"Je dénonce un voisin suspect au Comité de surveillance.",scores:{lumieres:0,histoire:1,ancien:0}},{text:"Je reste discret, je travaille, je ne parle à personne.",scores:{lumieres:1,histoire:2,ancien:1}}]},
+{id:17,acte:3,year:1794,title:"La chute de Robespierre",icon:"⚡",text:"9 <em>Thermidor</em> an II (27 juillet 1794). Robespierre, \"l'Incorruptible\", est arrêté par la Convention. Lui qui a envoyé tant de gens à la mort est guillotiné le lendemain avec 21 de ses partisans.\n\nLa Terreur prend fin. On respire enfin. Mais qui a vraiment gagné ?",question:"Comment réagis-tu à la chute de Robespierre ?",savoirPlus:"<h4>Après Thermidor</h4><p>La \"réaction thermidorienne\" : on poursuit les anciens terroristes, on ferme les clubs, on règle ses comptes.</p>",choices:[{text:"Enfin ! Le tyran est mort ! Vive le roi !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"La Terreur était devenue folle. Tant mieux que ce soit fini.",scores:{lumieres:2,histoire:2,ancien:0}},{text:"Robespierre défendait le peuple ! Ce sont les corrompus qui l'ont abattu !",scores:{lumieres:1,histoire:0,ancien:0}},{text:"Ouf ! On va peut-être pouvoir respirer...",scores:{lumieres:1,histoire:2,ancien:0}}]},
+{id:18,acte:4,year:1795,title:"Le Directoire",icon:"🏛️",text:"Le <em>Directoire</em> remplace la Convention. Cinq directeurs gouvernent la France. C'est un régime bourgeois, modéré, mais instable et corrompu.\n\nLes sans-culottes sont écartés du pouvoir. Les royalistes relèvent la tête. La guerre continue.",question:"Que penses-tu de ce nouveau régime ?",savoirPlus:"<h4>Un régime faible</h4><p>4 coups d'État en 4 ans. Ni royaliste ni jacobin, le Directoire ne satisfait personne.</p>",choices:[{text:"Sans roi, la France ne peut que sombrer dans le chaos.",scores:{lumieres:0,histoire:0,ancien:2}},{text:"Au moins, la Terreur est finie. Laissons-leur une chance.",scores:{lumieres:1,histoire:2,ancien:0}},{text:"Ces bourgeois corrompus ont trahi la Révolution du peuple !",scores:{lumieres:2,histoire:0,ancien:0}},{text:"Peu importe qui gouverne, tant qu'on peut faire des affaires.",scores:{lumieres:0,histoire:1,ancien:0}}]},
+{id:19,acte:4,year:1796,title:"Bonaparte en Italie",icon:"⚔️",text:"Un jeune général corse de 27 ans, Napoléon Bonaparte, prend le commandement de l'armée d'Italie. En quelques mois, il remporte victoire sur victoire contre les Autrichiens.\n\nIl impose la paix, crée des républiques-sœurs, ramène des trésors artistiques. Il devient un héros national.",question:"Que penses-tu de ce général victorieux ?",savoirPlus:"<h4>L'art de la propagande</h4><p>Bonaparte écrit lui-même les bulletins de victoire. Il soigne son image auprès de l'opinion.</p>",choices:[{text:"Un militaire qui prend trop de pouvoir est dangereux pour la liberté.",scores:{lumieres:2,histoire:0,ancien:0}},{text:"Enfin un homme fort ! La France a besoin de victoires !",scores:{lumieres:0,histoire:2,ancien:1}},{text:"Ce général va peut-être restaurer l'ordre et la monarchie.",scores:{lumieres:0,histoire:0,ancien:2}},{text:"Les victoires, c'est bien, mais quand aurons-nous enfin la paix ?",scores:{lumieres:1,histoire:1,ancien:0}}]},
+{id:20,acte:4,year:1799,title:"Le coup d'État du 18 Brumaire",icon:"🎭",text:"9 novembre 1799 (<em>18 Brumaire</em> an VIII). Bonaparte renverse le Directoire avec l'aide de son frère et de quelques complices. Les députés sont dispersés par les soldats.\n\n\"Citoyens, la Révolution est fixée aux principes qui l'ont commencée : elle est finie.\"\n\nBonaparte devient Premier Consul. Il concentre tous les pouvoirs.",question:"Comment réagis-tu à ce coup de force ?",savoirPlus:"<h4>La fin de la République ?</h4><p>En apparence, la République continue. En réalité, c'est une dictature militaire.</p>",choices:[{text:"Un dictateur militaire ! C'est la mort de la liberté !",scores:{lumieres:2,histoire:0,ancien:0}},{text:"Enfin un homme fort pour mettre fin au chaos !",scores:{lumieres:0,histoire:2,ancien:1}},{text:"Peut-être va-t-il restaurer le roi ?",scores:{lumieres:0,histoire:0,ancien:2}},{text:"Attendons de voir ce qu'il fait avant de juger.",scores:{lumieres:1,histoire:2,ancien:0}}]},
+{id:21,acte:5,year:1801,title:"Le Concordat",icon:"⛪",text:"Bonaparte signe le <em>Concordat</em> avec le pape Pie VII. La paix religieuse revient en France après 10 ans de conflit.\n\nLe catholicisme n'est plus religion d'État, mais \"religion de la majorité des Français\". L'État paie les prêtres, mais garde les biens nationaux.",question:"Que penses-tu de cette réconciliation avec l'Église ?",savoirPlus:"<h4>Un compromis</h4><p>Les révolutionnaires sont furieux. Les catholiques sont soulagés. Bonaparte a pacifié une guerre civile latente.</p>",choices:[{text:"Dieu soit loué ! On peut enfin pratiquer librement !",scores:{lumieres:0,histoire:1,ancien:2}},{text:"C'est un compromis intelligent qui apaise les divisions.",scores:{lumieres:1,histoire:2,ancien:0}},{text:"Bonaparte trahit la Révolution en s'alliant aux prêtres !",scores:{lumieres:2,histoire:0,ancien:0}},{text:"Tant qu'on ne m'oblige pas à aller à la messe...",scores:{lumieres:1,histoire:1,ancien:0}}]},
+{id:22,acte:5,year:1804,title:"Le sacre de Napoléon",icon:"👑",text:"2 décembre 1804. À Notre-Dame de Paris, Napoléon Bonaparte se couronne lui-même empereur des Français. Le pape est présent, mais Napoléon saisit la couronne et la pose lui-même sur sa tête.\n\nMessage clair : il ne doit son pouvoir qu'à lui-même, pas à Dieu ni au peuple.",question:"Comment réagis-tu ?",savoirPlus:"<h4>Le Code civil</h4><p>La même année, Napoléon promulgue le Code civil : égalité devant la loi, liberté de conscience, droit de propriété. Encore en vigueur aujourd'hui !</p>",choices:[{text:"Un usurpateur ! Le vrai roi légitime est Louis XVIII !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"Empereur... La République est bien morte. Triste jour.",scores:{lumieres:2,histoire:1,ancien:0}},{text:"Vive l'Empereur ! Il incarne la gloire de la France !",scores:{lumieres:0,histoire:2,ancien:0}},{text:"Roi ou empereur, quelle différence ? Tant qu'il y a l'ordre.",scores:{lumieres:0,histoire:1,ancien:1}}]},
+{id:23,acte:5,year:1805,title:"Austerlitz",icon:"⚔️",text:"2 décembre 1805, anniversaire du sacre. Napoléon écrase les armées autrichiennes et russes à Austerlitz, en Moravie.\n\nC'est le \"soleil d'Austerlitz\", sa plus belle victoire. Napoléon a feint la faiblesse pour attirer l'ennemi dans un piège. 15 000 morts côté ennemi, 1 300 côté français.",question:"Comment réagis-tu à cette victoire ?",savoirPlus:"<h4>La Grande Armée</h4><p>Napoléon commande la meilleure armée d'Europe, forgée par 15 ans de guerre. Ses maréchaux sont des légendes.</p>",choices:[{text:"Ces victoires ne profitent qu'à l'ambition d'un seul homme.",scores:{lumieres:2,histoire:0,ancien:1}},{text:"Gloire à l'Empereur ! La France domine l'Europe !",scores:{lumieres:0,histoire:2,ancien:0}},{text:"Mon fils est mort là-bas. Maudite soit cette guerre.",scores:{lumieres:1,histoire:0,ancien:0}},{text:"Tant de victoires... mais quand aurons-nous enfin la paix ?",scores:{lumieres:2,histoire:1,ancien:0}}]},
+{id:24,acte:5,year:1806,title:"Le blocus continental",icon:"🚢",text:"Napoléon décrète le <em>blocus continental</em> : interdiction totale de commercer avec l'Angleterre. Il veut asphyxier économiquement son dernier ennemi.\n\nMais le blocus ruine les ports français et fait monter les prix. La contrebande se développe.",question:"Comment cette mesure t'affecte-t-elle ?",savoirPlus:"<h4>Conséquences inattendues</h4><p>Le blocus développe l'industrie sucrière (betterave au lieu de canne) et textile française. Mais il crée aussi du mécontentement.</p>",choices:[{text:"L'Empereur sait ce qu'il fait. Il faut vaincre l'Angleterre.",scores:{lumieres:0,histoire:2,ancien:0}},{text:"Mon commerce est ruiné ! C'est une politique absurde !",scores:{lumieres:1,histoire:0,ancien:1}},{text:"Je fais de la contrebande avec l'Angleterre. Il faut bien vivre.",scores:{lumieres:0,histoire:1,ancien:0}},{text:"Je me reconvertis dans la betterave sucrière.",scores:{lumieres:0,histoire:2,ancien:0}}]},
+{id:25,acte:5,year:1812,title:"La campagne de Russie",icon:"❄️",text:"Napoléon envahit la Russie avec la Grande Armée : 600 000 hommes, la plus grande armée jamais assemblée en Europe.\n\nMais les Russes refusent le combat et pratiquent la terre brûlée. Moscou est prise, mais incendiée. La retraite dans le froid et la neige est un désastre.\n\nMoins de 100 000 hommes en reviendront.",question:"Comment réagis-tu à cette catastrophe ?",savoirPlus:"<h4>La Bérézina</h4><p>Le passage de cette rivière glacée, sous le feu des Russes, devient synonyme de désastre total.</p>",choices:[{text:"L'orgueil démesuré de Napoléon a causé la mort de nos fils.",scores:{lumieres:2,histoire:1,ancien:1}},{text:"L'Empereur a été trahi par le froid et les généraux.",scores:{lumieres:0,histoire:1,ancien:0}},{text:"C'est la fin. La France ne s'en remettra pas.",scores:{lumieres:1,histoire:2,ancien:1}},{text:"Mon frère n'est pas revenu. Je maudis cette guerre.",scores:{lumieres:2,histoire:1,ancien:0}}]},
+{id:26,acte:5,year:1814,title:"L'abdication",icon:"📜",text:"Les armées coalisées (Russie, Prusse, Autriche, Angleterre) envahissent la France. Paris tombe le 31 mars 1814.\n\nNapoléon abdique le 6 avril. Il reçoit la souveraineté de l'île d'Elbe, en Méditerranée.\n\nLouis XVIII, frère de Louis XVI, rentre à Paris. Les Bourbons sont de retour.",question:"Comment réagis-tu au retour des Bourbons ?",savoirPlus:"<h4>La Charte</h4><p>Louis XVIII accorde une Constitution (la \"Charte\"). La monarchie absolue ne reviendra pas.</p>",choices:[{text:"Enfin ! Le roi légitime est de retour !",scores:{lumieres:0,histoire:1,ancien:2}},{text:"Adieu la République, adieu l'Empire... Tout ça pour ça.",scores:{lumieres:2,histoire:1,ancien:0}},{text:"Napoléon reviendra. Ce n'est qu'un au revoir.",scores:{lumieres:0,histoire:2,ancien:0}},{text:"Un roi, un empereur... Je veux juste la paix.",scores:{lumieres:1,histoire:1,ancien:0}}]},
+{id:27,acte:6,year:1815,title:"Les Cent-Jours",icon:"🦅",text:"Mars 1815. Napoléon s'évade de l'île d'Elbe avec 1 000 hommes. Il débarque sur la Côte d'Azur et marche vers Paris.\n\nLes soldats envoyés l'arrêter se rallient à lui. \"L'aigle volera de clocher en clocher jusqu'aux tours de Notre-Dame.\"\n\nLouis XVIII fuit. Napoléon reprend le pouvoir pour Cent Jours.",question:"Comment réagis-tu à ce retour spectaculaire ?",savoirPlus:"<h4>Le vol de l'Aigle</h4><p>Napoléon reconquiert la France sans tirer un coup de feu. Son charisme est intact.</p>",choices:[{text:"L'usurpateur est de retour ! Fuyons !",scores:{lumieres:0,histoire:0,ancien:2}},{text:"Vive l'Empereur ! Il va nous venger !",scores:{lumieres:0,histoire:1,ancien:0}},{text:"Encore la guerre... Combien de morts cette fois ?",scores:{lumieres:2,histoire:1,ancien:0}},{text:"Attendons de voir qui l'emporte avant de choisir.",scores:{lumieres:0,histoire:2,ancien:1}}]},
+{id:28,acte:6,year:1815,title:"Waterloo",icon:"⚔️",text:"18 juin 1815. <em>Waterloo</em>, en Belgique. Napoléon affronte les Anglais de Wellington et les Prussiens de Blücher.\n\nLa bataille est longue et indécise. L'arrivée des Prussiens en fin de journée scelle le sort de l'Empire. C'est la défaite finale.\n\n\"Morne plaine\" écrira Victor Hugo. 50 000 morts en une journée.",question:"C'est vraiment la fin cette fois. Comment te sens-tu ?",savoirPlus:"<h4>L'exil final</h4><p>Napoléon se rend aux Anglais. Il sera exilé à Sainte-Hélène, île perdue dans l'Atlantique Sud.</p>",choices:[{text:"Justice divine ! Le tyran est enfin vaincu !",scores:{lumieres:0,histoire:1,ancien:2}},{text:"La France a perdu sa gloire. Tout est fini.",scores:{lumieres:0,histoire:1,ancien:0}},{text:"Enfin la paix ! Qu'on nous laisse vivre en paix !",scores:{lumieres:2,histoire:2,ancien:0}},{text:"Napoléon était un génie. L'histoire le reconnaîtra.",scores:{lumieres:0,histoire:1,ancien:0}}]},
+{id:29,acte:6,year:1821,title:"Mort de Napoléon",icon:"⚰️",text:"5 mai 1821. Napoléon Bonaparte meurt à <em>Sainte-Hélène</em>, après 6 ans d'exil. Il a 51 ans.\n\nSes derniers mots auraient été : \"France... armée... tête d'armée... Joséphine...\"\n\nSon corps sera ramené à Paris en 1840, aux Invalides, où il repose encore aujourd'hui.",question:"32 ans ont passé depuis 1789. Quel bilan tires-tu de cette époque tumultueuse ?",savoirPlus:"<h4>L'héritage</h4><p>Le Code civil, le système éducatif, l'administration moderne, le système métrique... Napoléon a façonné la France moderne.</p>",choices:[{text:"Bon débarras ! Cet homme a causé des millions de morts.",scores:{lumieres:1,histoire:0,ancien:2}},{text:"Un géant de l'Histoire. La France ne sera plus jamais la même.",scores:{lumieres:0,histoire:2,ancien:0}},{text:"Il a trahi les idéaux de la Révolution pour son ambition personnelle.",scores:{lumieres:2,histoire:1,ancien:0}},{text:"L'Histoire jugera. Nous sommes encore trop proches pour comprendre.",scores:{lumieres:2,histoire:2,ancien:0}}]}
 ];
 
 function generateGameCode() { const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let r=''; for(let i=0;i<4;i++)r+=c.charAt(Math.floor(Math.random()*c.length)); return r; }
@@ -217,25 +251,15 @@ document.getElementById('createGameBtn').addEventListener('click', async functio
     document.getElementById('displayCode').textContent = gameCode;
     const joinUrl = window.location.href.replace('maitre', 'eleve').split('?')[0] + '?code=' + gameCode;
     document.getElementById('joinUrl').textContent = joinUrl;
-    
-    // Générer QR Code
     const qrContainer = document.getElementById('qrCode');
     qrContainer.innerHTML = '';
-    new QRCode(qrContainer, {
-        text: joinUrl,
-        width: 180,
-        height: 180,
-        colorDark: '#002654',
-        colorLight: '#ffffff'
-    });
+    new QRCode(qrContainer, { text: joinUrl, width: 180, height: 180, colorDark: '#002654', colorLight: '#ffffff' });
     gameRef.child('players').on('value', (snapshot) => { players = snapshot.val() || {}; updatePlayersList(); });
 });
 
 function updatePlayersList() {
-    console.log('Players reçus:', players);
     const container = document.getElementById('playersWaiting');
     const names = Object.values(players).map(p => p.name).filter(n => n);
-    console.log('Noms:', names);
     container.innerHTML = names.map(n => '<span class="player-chip">' + n + '</span>').join('');
     document.getElementById('playerCountSetup').textContent = names.length;
     document.getElementById('startGameBtn').disabled = names.length < 1;
@@ -246,26 +270,32 @@ document.getElementById('startGameBtn').addEventListener('click', async function
     document.getElementById('setupScreen').classList.add('hidden');
     document.getElementById('gameScreen').classList.remove('hidden');
     document.getElementById('headerCode').textContent = gameCode;
+    document.getElementById('totalNum').textContent = situations.length;
     renderSituation();
     listenToResponses();
 });
 
 function addTooltips(text) {
     return text.replace(/<em>([^<]+)<\/em>/g, function(m, t) {
-        const d = definitions[t];
-        return d ? '<span class="term" data-def="' + d.replace(/"/g, '&quot;') + '">' + t + '</span>' : '<span class="term">' + t + '</span>';
+        return '<span class="term">' + t + '</span>';
     });
 }
 
 function renderSituation() {
+    showingRankings = false;
+    document.getElementById('situationScreen').style.display = 'flex';
+    document.getElementById('rankingsScreen').classList.remove('active');
+    
     const s = situations[currentSituation];
     const a = actes.find(x => x.id === s.acte);
     document.getElementById('situationYear').textContent = s.year;
     document.getElementById('situationActe').textContent = 'Acte ' + a.id + ' • ' + a.periode;
     document.getElementById('situationIcon').textContent = s.icon;
     document.getElementById('situationTitle').textContent = s.title;
-    document.getElementById('situationText').innerHTML = addTooltips(s.text).replace(/\n/g, '<br>');
+    document.getElementById('situationText').innerHTML = addTooltips(s.text).replace(/\n/g, '<br><br>');
     document.getElementById('situationQuestion').textContent = s.question;
+    document.getElementById('currentNum').textContent = currentSituation + 1;
+    
     const cl = document.getElementById('choicesList');
     cl.innerHTML = '';
     ['A','B','C','D'].forEach((l, i) => {
@@ -276,14 +306,18 @@ function renderSituation() {
             cl.appendChild(d);
         }
     });
-    if (s.savoirPlus) { document.getElementById('savoirPlusBox').classList.remove('hidden'); document.getElementById('savoirPlusContent').innerHTML = s.savoirPlus; }
-    else { document.getElementById('savoirPlusBox').classList.add('hidden'); }
-    const p = ((currentSituation + 1) / situations.length) * 100;
-    document.getElementById('progressFill').style.width = p + '%';
-    document.getElementById('progressText').textContent = (currentSituation + 1) + ' / ' + situations.length;
-    document.getElementById('responsesCount').textContent = '0';
-    document.getElementById('nextSituationBtn').disabled = true;
+    
+    document.getElementById('nextBtn').disabled = true;
+    document.getElementById('nextBtn').textContent = 'En attente des réponses...';
     if (gameRef) gameRef.update({ currentSituation });
+}
+
+function showRankings() {
+    showingRankings = true;
+    document.getElementById('situationScreen').style.display = 'none';
+    document.getElementById('rankingsScreen').classList.add('active');
+    document.getElementById('nextBtn').disabled = false;
+    document.getElementById('nextBtn').textContent = currentSituation < situations.length - 1 ? 'Situation suivante →' : 'Voir les résultats →';
     updateRankings();
 }
 
@@ -295,8 +329,11 @@ function listenToResponses() {
         const total = Object.keys(players).length;
         document.getElementById('responsesCount').textContent = resp;
         document.getElementById('totalPlayers').textContent = total;
-        document.getElementById('playerCount').textContent = total;
-        document.getElementById('nextSituationBtn').disabled = resp < total || total === 0;
+        
+        if (resp >= total && total > 0 && !showingRankings) {
+            showRankings();
+        }
+        
         updateRankings();
     });
 }
@@ -321,37 +358,44 @@ function updateRankings() {
 function renderRanking(id, sorted, key) {
     const c = document.getElementById(id);
     c.innerHTML = '';
-    sorted.slice(0, 6).forEach((p, i) => {
+    sorted.forEach((p, i) => {
         const li = document.createElement('li');
         li.className = 'ranking-item';
-        let pc = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
-        li.innerHTML = '<span class="ranking-position ' + pc + '">' + (i + 1) + '</span><span class="ranking-name">' + p.name + '</span><span class="ranking-score">' + p[key] + '</span>';
+        li.innerHTML = '<span class="ranking-position">' + (i + 1) + '</span><span class="ranking-name">' + p.name + '</span><span class="ranking-score">' + p[key] + ' pts</span>';
         c.appendChild(li);
     });
 }
 
-document.getElementById('nextSituationBtn').addEventListener('click', function() {
-    if (currentSituation < situations.length - 1) { currentSituation++; renderSituation(); }
-    else showEndScreen();
+document.getElementById('nextBtn').addEventListener('click', function() {
+    if (currentSituation < situations.length - 1) {
+        currentSituation++;
+        renderSituation();
+    } else {
+        showEndScreen();
+    }
 });
 
 function showEndScreen() {
     document.getElementById('gameScreen').classList.add('hidden');
-    document.getElementById('endScreen').classList.remove('hidden');
+    document.getElementById('endScreen').classList.add('active');
+    
     const scores = [];
     Object.entries(players).forEach(([id, p]) => {
         let l = 0, h = 0, a = 0;
         if (p.responses) { Object.entries(p.responses).forEach(([si, ci]) => { const sit = situations[parseInt(si)]; if (sit && sit.choices[ci]) { l += sit.choices[ci].scores.lumieres || 0; h += sit.choices[ci].scores.histoire || 0; a += sit.choices[ci].scores.ancien || 0; } }); }
         scores.push({ name: p.name, lumieres: l, histoire: h, ancien: a });
     });
+    
     const lTop = scores.slice().sort((a, b) => b.lumieres - a.lumieres);
     const hTop = scores.slice().sort((a, b) => b.histoire - a.histoire);
     const aTop = scores.slice().sort((a, b) => b.ancien - a.ancien);
     const avgL = scores.reduce((s, p) => s + p.lumieres, 0) / scores.length || 0;
     const avgH = scores.reduce((s, p) => s + p.histoire, 0) / scores.length || 0;
     const avgA = scores.reduce((s, p) => s + p.ancien, 0) / scores.length || 0;
-    let tendency = avgH > avgL && avgH > avgA ? "🎯 Votre classe suit le cours de l'Histoire." : avgL > avgH && avgL > avgA ? "🏛️ Votre classe est fidèle aux idéaux des Lumières." : "👑 Votre classe défend l'ordre traditionnel.";
-    document.getElementById('endScreen').innerHTML = '<h1 class="end-title">🏛️ Fin de la partie</h1><div class="final-rankings"><div class="final-ranking-card lumieres"><div class="ranking-header"><span class="ranking-icon">🏛️</span><span class="ranking-title">Lumières</span></div><div class="podium">' + (lTop[1] ? '<div class="podium-place second"><div class="podium-name">' + lTop[1].name + '</div><div class="podium-score">' + lTop[1].lumieres + '</div></div>' : '') + (lTop[0] ? '<div class="podium-place first"><div class="podium-name">' + lTop[0].name + '</div><div class="podium-score">' + lTop[0].lumieres + '</div></div>' : '') + (lTop[2] ? '<div class="podium-place third"><div class="podium-name">' + lTop[2].name + '</div><div class="podium-score">' + lTop[2].lumieres + '</div></div>' : '') + '</div></div><div class="final-ranking-card histoire"><div class="ranking-header"><span class="ranking-icon">📜</span><span class="ranking-title">Histoire</span></div><div class="podium">' + (hTop[1] ? '<div class="podium-place second"><div class="podium-name">' + hTop[1].name + '</div><div class="podium-score">' + hTop[1].histoire + '</div></div>' : '') + (hTop[0] ? '<div class="podium-place first"><div class="podium-name">' + hTop[0].name + '</div><div class="podium-score">' + hTop[0].histoire + '</div></div>' : '') + (hTop[2] ? '<div class="podium-place third"><div class="podium-name">' + hTop[2].name + '</div><div class="podium-score">' + hTop[2].histoire + '</div></div>' : '') + '</div></div><div class="final-ranking-card ancien"><div class="ranking-header"><span class="ranking-icon">👑</span><span class="ranking-title">Ancien Régime</span></div><div class="podium">' + (aTop[1] ? '<div class="podium-place second"><div class="podium-name">' + aTop[1].name + '</div><div class="podium-score">' + aTop[1].ancien + '</div></div>' : '') + (aTop[0] ? '<div class="podium-place first"><div class="podium-name">' + aTop[0].name + '</div><div class="podium-score">' + aTop[0].ancien + '</div></div>' : '') + (aTop[2] ? '<div class="podium-place third"><div class="podium-name">' + aTop[2].name + '</div><div class="podium-score">' + aTop[2].ancien + '</div></div>' : '') + '</div></div></div><div class="class-stats"><h2 class="stats-title">📊 Statistiques de la classe</h2><div class="stats-grid"><div class="stat-item"><div class="stat-value">' + scores.length + '</div><div class="stat-label">Joueurs</div></div><div class="stat-item"><div class="stat-value">' + avgL.toFixed(1) + '</div><div class="stat-label">Moy. Lumières</div></div><div class="stat-item"><div class="stat-value">' + avgH.toFixed(1) + '</div><div class="stat-label">Moy. Histoire</div></div><div class="stat-item"><div class="stat-value">' + avgA.toFixed(1) + '</div><div class="stat-label">Moy. Ancien R.</div></div></div><p style="text-align:center;margin-top:1rem;opacity:0.8;">' + tendency + '</p></div><div style="text-align:center;margin-top:2rem;"><button class="btn btn-primary" onclick="location.reload()">Nouvelle partie</button></div>';
+    
+    let tendency = avgH > avgL && avgH > avgA ? "🎯 Votre classe aurait suivi le cours de l'Histoire, s'adaptant aux événements." : avgL > avgH && avgL > avgA ? "🏛️ Votre classe est fidèle aux idéaux des Lumières : liberté, égalité, raison." : "👑 Votre classe aurait défendu l'ordre traditionnel et la monarchie.";
+    
+    document.getElementById('endScreen').innerHTML = '<h1 class="end-title">🏛️ Fin de la partie !</h1><div class="final-rankings"><div class="final-ranking-card lumieres"><div class="ranking-header"><span class="ranking-icon">🏛️</span><span class="ranking-title">Penseurs des Lumières</span></div><div class="podium">' + (lTop[1] ? '<div class="podium-place second"><div class="podium-name">' + lTop[1].name + '</div><div class="podium-score">' + lTop[1].lumieres + ' pts</div></div>' : '') + (lTop[0] ? '<div class="podium-place first"><div class="podium-name">' + lTop[0].name + '</div><div class="podium-score">' + lTop[0].lumieres + ' pts</div></div>' : '') + (lTop[2] ? '<div class="podium-place third"><div class="podium-name">' + lTop[2].name + '</div><div class="podium-score">' + lTop[2].lumieres + ' pts</div></div>' : '') + '</div></div><div class="final-ranking-card histoire"><div class="ranking-header"><span class="ranking-icon">📜</span><span class="ranking-title">Acteurs de l\'Histoire</span></div><div class="podium">' + (hTop[1] ? '<div class="podium-place second"><div class="podium-name">' + hTop[1].name + '</div><div class="podium-score">' + hTop[1].histoire + ' pts</div></div>' : '') + (hTop[0] ? '<div class="podium-place first"><div class="podium-name">' + hTop[0].name + '</div><div class="podium-score">' + hTop[0].histoire + ' pts</div></div>' : '') + (hTop[2] ? '<div class="podium-place third"><div class="podium-name">' + hTop[2].name + '</div><div class="podium-score">' + hTop[2].histoire + ' pts</div></div>' : '') + '</div></div><div class="final-ranking-card ancien"><div class="ranking-header"><span class="ranking-icon">👑</span><span class="ranking-title">Défenseurs Ancien Régime</span></div><div class="podium">' + (aTop[1] ? '<div class="podium-place second"><div class="podium-name">' + aTop[1].name + '</div><div class="podium-score">' + aTop[1].ancien + ' pts</div></div>' : '') + (aTop[0] ? '<div class="podium-place first"><div class="podium-name">' + aTop[0].name + '</div><div class="podium-score">' + aTop[0].ancien + ' pts</div></div>' : '') + (aTop[2] ? '<div class="podium-place third"><div class="podium-name">' + aTop[2].name + '</div><div class="podium-score">' + aTop[2].ancien + ' pts</div></div>' : '') + '</div></div></div><div class="class-stats"><h2 class="stats-title">📊 Tendance de la classe</h2><div class="stats-grid"><div class="stat-item"><div class="stat-value">' + scores.length + '</div><div class="stat-label">Joueurs</div></div><div class="stat-item"><div class="stat-value">' + avgL.toFixed(1) + '</div><div class="stat-label">Moy. Lumières</div></div><div class="stat-item"><div class="stat-value">' + avgH.toFixed(1) + '</div><div class="stat-label">Moy. Histoire</div></div><div class="stat-item"><div class="stat-value">' + avgA.toFixed(1) + '</div><div class="stat-label">Moy. Ancien Régime</div></div></div><p style="text-align:center;margin-top:1.5rem;font-size:1.2rem;">' + tendency + '</p></div><div style="text-align:center;margin-top:2rem;"><button class="btn btn-gold" onclick="location.reload()" style="font-size:1.2rem;padding:1rem 3rem;">Nouvelle partie</button></div>';
 }
 </script>
 </body>
